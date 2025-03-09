@@ -21,7 +21,7 @@ function InstallBanner() {
             setDeferredPrompt(e);
             setTimeout(() => {
                 setIsShown(true);
-            }, 10 * 60 * 1000); // 10 minutes
+            }, 2 * 60 * 1000); // 10 minutes
         };
 
         window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
