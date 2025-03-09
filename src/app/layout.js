@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/components/language-provider"
 import CookieConsent from "@/components/cookie-consent"
 import "./globals.css"
+import InstallBanner from "@/components/layout/install-banner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
               <CookieConsent />
               <Toaster position="top-right" />
             </div>
+            <InstallBanner />
           </LanguageProvider>
         </ThemeProvider>
       </body>
