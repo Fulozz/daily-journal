@@ -4,7 +4,7 @@
  */
 import axios from "axios"
 
-const API_BASE_URL = "https://daily-journal-backend-3bb6.onrender.com"
+const API_BASE_URL = "https://daily-journal-backend-3bb6.onrender.com/api/v1"
 
 /**
  * Get all tasks for the authenticated user
