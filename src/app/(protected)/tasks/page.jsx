@@ -13,7 +13,7 @@ import { useLanguage } from "@/components/language-provider"
 import TaskItem from "@/components/tasks/task-item"
 import TaskForm from "@/components/tasks/task-form"
 import TaskDetailModal from "@/components/tasks/task-detail-modal"
-import { deleteTask, updateTask } from "@/lib/api"
+import { deleteTask, updateTask , getTasks } from "@/lib/api"
 
 export default function TasksPage() {
   const { t } = useLanguage()
@@ -36,11 +36,7 @@ export default function TasksPage() {
     const token = getCookie("token")
 
     try {
-      const response = await axios.get("https://daily-journal-backend-3bb6.onrender.com/api/v1/tasks", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const response = await getTasks(token)
 
       if (response.data) {
         setTasks(response.data)
