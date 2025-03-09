@@ -81,11 +81,15 @@ export const validateToken = async (token) => {
   if (!token) return false
 
   try {
-    const response = await axios.get(`${API_BASE_URL}/validate-token`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await axios.post(
+      `${API_BASE_URL}/validate-token`,
+      {}, // Empty body
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    })
+    )
     return response.status === 200
   } catch (error) {
     console.error("Token validation error:", error)

@@ -10,12 +10,14 @@ const inter = Inter({ subsets: ["latin"] })
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className} cz-shortcut-listen="true">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <body className={inter.className}>
+        <ThemeProvider>
           <LanguageProvider>
-            {children}
-            <CookieConsent />
-            <Toaster position="top-right" />
+            <div className="min-h-screen flex flex-col items-center">
+              {children}
+              <CookieConsent />
+              <Toaster position="top-right" />
+            </div>
           </LanguageProvider>
         </ThemeProvider>
       </body>

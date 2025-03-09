@@ -15,7 +15,7 @@ export default async function LoginPage() {
     <div className="flex min-h-screen flex-col">
       {/* Simple header for login page */}
       <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
+        <div className="container mx-auto flex h-14 items-center max-w-7xl px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center space-x-2">
             <BookOpen className="h-6 w-6" />
             <span className="font-bold text-xl">Daily Journal</span>
@@ -23,7 +23,7 @@ export default async function LoginPage() {
         </div>
       </header>
 
-      <div className="container flex flex-1 items-center justify-center py-12">
+      <div className="flex flex-1 items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-6">
           <div className="space-y-2 text-center">
             <h1 className="text-3xl font-bold">Welcome Back</h1>

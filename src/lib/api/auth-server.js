@@ -8,18 +8,17 @@ import { cookies } from "next/headers"
 const API_BASE_URL = "https://portfolio-backend-zpig.onrender.com/api/v1"
 
 /**
- * post auth token from cookies (server-side)
+ * Get auth token from cookies (server-side)
  *
  * @returns {Promise<string|null>} - The authentication token or null if not found
  *
  * @example
- * // post auth token server-side
- * const token = await postAuthTokenServer();
+ * // Get auth token server-side
+ * const token = await getAuthTokenServer();
  */
-export async function postAuthTokenServer() {
+export async function getAuthTokenServer() {
   const cookieStore = await cookies()
   const token = cookieStore.get("token")
-  console.log(token.value)
   return token?.value || null
 }
 
@@ -33,7 +32,7 @@ export async function postAuthTokenServer() {
  * const user = await getUserServer();
  */
 export async function getUserServer() {
-  const cookieStore = await cookies()
+  const cookieStore = cookies()
   const userCookie = cookieStore.get("user")
 
   if (!userCookie?.value) return null
@@ -56,7 +55,7 @@ export async function getUserServer() {
  * const isAuthenticated = await isAuthenticatedServer();
  */
 export async function isAuthenticatedServer() {
-  const token = await postAuthTokenServer()
+  const token = await getAuthTokenServer()
   return !!token
 }
 
@@ -75,11 +74,15 @@ export async function validateTokenServer(token) {
   if (!token) return false
 
   try {
-    const response = await axios.post(`${API_BASE_URL}/validate-token`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await axios.post(
+      `${API_BASE_URL}/validate-token`,
+      {}, // Empty body
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    })
+    )
     return response.status === 200
   } catch (error) {
     console.error("Token validation error:", error)
