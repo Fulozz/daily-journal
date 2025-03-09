@@ -11,7 +11,7 @@ function InstallBanner() {
             return;
         }
 
-        const isBannerInstalled = getCookie('isBannerInstalled') === 'true';
+        const isBannerInstalled = localStorage.getItem('isBannerInstalled') === 'true';
         setIsShown(!isBannerInstalled);
 
         const handleBeforeInstallPrompt = (e) => {
@@ -32,7 +32,7 @@ function InstallBanner() {
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
-                    setCookie('isBannerInstalled', 'true', 3650); // 10 years
+                    localStorage.setItem('isBannerInstalled', 'true');
                     setIsShown(false);
                 }
                 setDeferredPrompt(null);
@@ -41,7 +41,7 @@ function InstallBanner() {
     };
 
     const handleDecline = () => {
-        setCookie('isBannerInstalled', 'false', 2); // 2 days
+        localStorage.setItem('isBannerInstalled', 'true');
         setIsShown(false);
     };
 
@@ -54,7 +54,7 @@ function InstallBanner() {
             Adicione este site à sua tela inicial para um acesso mais rápido!
             <div className="flex justify-center mt-2">
             <button onClick={handleDecline} className="text-sm font-medium text-muted-foreground rounded-md px-4 py-2  mr-2">
-                    Recusars
+                    Recusar
                 </button>
                 <button onClick={handleInstall} className="bg-white text-black rounded-md px-4 py-2 mr-2">
                     Instalar
