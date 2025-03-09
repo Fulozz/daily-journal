@@ -1,7 +1,7 @@
 {
-    "name": "Controle Financeiro",
-    "short_name": "Financeiro",
-    "description": "Este é um aplicativo para seu controle financeiro, e planejamento",
+    "name": "Task",
+    "short_name": "Daily Task",
+    "description": "Este é um aplicativo para seu controle de tarefas, e anotações",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
