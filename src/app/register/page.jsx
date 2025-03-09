@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation"
-import { cookies } from "next/headers"
 import Link from "next/link"
 import { BookOpen } from "lucide-react"
 import RegisterForm from "@/components/auth/register-form"
+import { isAuthenticatedServer } from "@/lib/api/auth-server"
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
   // If user is already logged in, redirect to dashboard
-  const token = cookies().get("token")
-  if (token) {
+  const isAuthenticated = await isAuthenticatedServer()
+  if (isAuthenticated) {
     redirect("/dashboard")
   }
 

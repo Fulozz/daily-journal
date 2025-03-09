@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { getCookie } from "cookies-next"
-import axios from "axios"
 import toast from "react-hot-toast"
 import { Plus, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -12,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { useLanguage } from "@/components/language-provider"
 import EntryCard from "@/components/entries/entry-card"
 import EntryForm from "@/components/entries/entry-form"
+import { getEntries, createEntry, deleteEntry } from "@/lib/api"
 
 export default function DashboardPage() {
   const { t } = useLanguage()
@@ -21,8 +21,10 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [showEntryForm, setShowEntryForm] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const userCookie = getCookie("user")
     if (userCookie) {
       try {
@@ -40,36 +42,10 @@ export default function DashboardPage() {
     const token = getCookie("token")
 
     try {
-      const response = await axios.get("https://portfolio-backend-zpig.onrender.com/api/v1/entries", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (response.data) {
-        setEntries(response.data)
-      }
+      const entriesData = await getEntries(token)
+      setEntries(entriesData)
     } catch (error) {
-      console.error("Error fetching entries:", error)
-      if (error.response?.status === 404) {
-        // API endpoint not found, use mock data
-        setEntries([
-          {
-            id: "1",
-            title: "First Entry",
-            content: "This is my first journal entry.",
-            createdAt: new Date().toISOString(),
-          },
-          {
-            id: "2",
-            title: "Second Entry",
-            content: "Today was a productive day.",
-            createdAt: new Date(Date.now() - 86400000).toISOString(),
-          },
-        ])
-      } else {
-        toast.error("Failed to fetch entries")
-      }
+      toast.error("Failed to fetch entries")
     } finally {
       setIsLoading(false)
     }
@@ -79,32 +55,12 @@ export default function DashboardPage() {
     const token = getCookie("token")
 
     try {
-      const response = await axios.post("https://portfolio-backend-zpig.onrender.com/api/v1/entries", entryData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (response.data) {
-        toast.success("Entry added successfully")
-        setEntries([response.data, ...entries])
-        setShowEntryForm(false)
-      }
+      const newEntry = await createEntry(token, entryData)
+      toast.success("Entry added successfully")
+      setEntries([newEntry, ...entries])
+      setShowEntryForm(false)
     } catch (error) {
-      console.error("Error adding entry:", error)
-      if (error.response?.status === 404) {
-        // API endpoint not found, add to mock data
-        const newEntry = {
-          id: Date.now().toString(),
-          ...entryData,
-          createdAt: new Date().toISOString(),
-        }
-        setEntries([newEntry, ...entries])
-        toast.success("Entry added successfully")
-        setShowEntryForm(false)
-      } else {
-        toast.error("Failed to add entry")
-      }
+      toast.error("Failed to add entry")
     }
   }
 
@@ -112,23 +68,11 @@ export default function DashboardPage() {
     const token = getCookie("token")
 
     try {
-      await axios.delete(`https://portfolio-backend-zpig.onrender.com/api/v1/entries/${entryId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
+      await deleteEntry(token, entryId)
       toast.success("Entry deleted successfully")
       setEntries(entries.filter((entry) => entry.id !== entryId))
     } catch (error) {
-      console.error("Error deleting entry:", error)
-      if (error.response?.status === 404) {
-        // API endpoint not found, remove from mock data
-        setEntries(entries.filter((entry) => entry.id !== entryId))
-        toast.success("Entry deleted successfully")
-      } else {
-        toast.error("Failed to delete entry")
-      }
+      toast.error("Failed to delete entry")
     }
   }
 
@@ -137,6 +81,11 @@ export default function DashboardPage() {
       entry.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       entry.content.toLowerCase().includes(searchQuery.toLowerCase()),
   )
+
+  // Avoid hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return null
+  }
 
   return (
     <div className="container py-6">
