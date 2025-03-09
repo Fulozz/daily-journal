@@ -61,6 +61,12 @@ const translations = {
     editTask: "Edit Task",
     dontHaveAccount: "Don't have an account?",
     alreadyHaveAccount: "Already have an account?",
+    preferencesSaved: "Preferences saved successfully",
+    savePreferences: "Save Preferences",
+    dueDate: "Due Date",
+    selectDueDate: "Select due date",
+    clearDate: "Clear date",
+    completedOn: "Completed on",
   },
   "pt-BR": {
     login: "Entrar",
@@ -118,15 +124,28 @@ const translations = {
     editTask: "Editar Tarefa",
     dontHaveAccount: "Não tem uma conta?",
     alreadyHaveAccount: "Já tem uma conta?",
+    preferencesSaved: "Preferências salvas com sucesso",
+    savePreferences: "Salvar Preferências",
+    dueDate: "Data de Vencimento",
+    selectDueDate: "Selecione a data de vencimento",
+    clearDate: "Limpar data",
+    completedOn: "Foi concluído em",
   },
 }
 
-const LanguageContext = createContext()
+// Create context with default values to prevent undefined errors
+const LanguageContext = createContext({
+  language: "en-US",
+  changeLanguage: () => {},
+  t: (key) => key,
+})
 
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useState("en-US")
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const savedLanguage = getCookie("language") || "en-US"
     setLanguage(savedLanguage)
   }, [])
@@ -137,10 +156,21 @@ export function LanguageProvider({ children }) {
   }
 
   const t = (key) => {
-    return translations[language][key] || key
+    return (translations[language] && translations[language][key]) || key
   }
 
-  return <LanguageContext.Provider value={{ language, changeLanguage, t }}>{children}</LanguageContext.Provider>
+  // Provide default values even before mounting to prevent undefined errors
+  return (
+    <LanguageContext.Provider
+      value={{
+        language,
+        changeLanguage,
+        t,
+      }}
+    >
+      {children}
+    </LanguageContext.Provider>
+  )
 }
 
 export const useLanguage = () => useContext(LanguageContext)

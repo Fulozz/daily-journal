@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] })
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={inter.className} cz-shortcut-listen="true">
         <ThemeProvider>
           <LanguageProvider>
             <div className="min-h-screen flex flex-col items-center">
