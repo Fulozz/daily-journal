@@ -166,7 +166,7 @@ export const updateTask = async (token, taskId, taskData) => {
  */
 export const toggleTaskCompletion = async (token, taskId, completed) => {
   try {
-    const response = await axios.patch(
+    const response = await axios.put(
       `${API_BASE_URL}/tasks/${taskId}`,
       { completed },
       {
