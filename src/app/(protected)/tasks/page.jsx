@@ -13,6 +13,7 @@ import { useLanguage } from "@/components/language-provider"
 import TaskItem from "@/components/tasks/task-item"
 import TaskForm from "@/components/tasks/task-form"
 import TaskDetailModal from "@/components/tasks/task-detail-modal"
+import { deleteTask, updateTask } from "@/lib/api"
 
 export default function TasksPage() {
   const { t } = useLanguage()
@@ -35,7 +36,7 @@ export default function TasksPage() {
     const token = getCookie("token")
 
     try {
-      const response = await axios.get("https://portfolio-backend-zpig.onrender.com/api/v1/tasks", {
+      const response = await axios.get("https://daily-journal-backend-3bb6.onrender.com/api/v1/tasks", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -87,7 +88,7 @@ export default function TasksPage() {
     const token = getCookie("token")
 
     try {
-      const response = await axios.post("https://portfolio-backend-zpig.onrender.com/api/v1/tasks", taskData, {
+      const response = await axios.post("https://daily-journal-backend-3bb6.onrender.com/api/v1/tasks", taskData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -131,7 +132,7 @@ export default function TasksPage() {
 
     try {
       await axios.patch(
-        `https://portfolio-backend-zpig.onrender.com/api/v1/tasks/${taskId}`,
+        `https://daily-journal-backend-3bb6.onrender.com/api/v1/tasks/${taskId}`,
         {
           completed: isCompleting,
           completionDate: completionDate,
@@ -197,12 +198,8 @@ export default function TasksPage() {
     const token = getCookie("token")
 
     try {
-      await axios.put(`https://portfolio-backend-zpig.onrender.com/api/v1/tasks/${taskId}`, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
+      updateTask
+      put
       toast.success("Task updated successfully")
 
       const updatedTasks = tasks.map((task) => (task.id === taskId ? { ...task, ...data } : task))
@@ -227,12 +224,9 @@ export default function TasksPage() {
   const handleDeleteTask = async (taskId) => {
     const token = getCookie("token")
 
+    
     try {
-      await axios.delete(`https://portfolio-backend-zpig.onrender.com/api/v1/tasks/${taskId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      await deleteTask(token, taskId)
 
       toast.success("Task deleted successfully")
       setTasks(tasks.filter((task) => task.id !== taskId))
