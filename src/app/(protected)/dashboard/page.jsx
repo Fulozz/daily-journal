@@ -64,7 +64,7 @@ export default function DashboardPage() {
       toast.success("Entry added successfully")
       setEntries([newEntry, ...entries])
       setShowEntryForm(false)
-      fetchEntries()
+      await fetchEntries()
     } catch (error) {
       toast.error("Failed to add entry")
     }
@@ -76,7 +76,7 @@ export default function DashboardPage() {
     try {
       await deleteEntry(token, entryId)
       toast.success("Entry deleted successfully")
-      fetchEntries()
+      await fetchEntries()
       setEntries(entries.filter((entry) => entry._id !== entryId))
     } catch (error) {
       toast.error("Failed to delete entry")
