@@ -88,7 +88,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onClick }) 
               size="icon"
               onClick={(e) => {
                 e.stopPropagation()
-                onDelete(task.id)
+                onDelete(task._id)
               }}
               className="h-8 w-8 text-destructive hover:text-destructive"
             >

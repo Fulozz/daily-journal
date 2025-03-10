@@ -226,7 +226,7 @@ export default function TasksPage() {
 
   const handleDeleteTask = async (taskId) => {
     const token = getCookie("token")
-
+    console.log(taskId)
     
     try {
       await deleteTask(token, taskId)
@@ -346,7 +346,7 @@ export default function TasksPage() {
         <div className="space-y-2">
           {filteredTasks.map((task) => (
             <TaskItem
-              key={task.id}
+              key={task._id}
               task={task}
               onToggle={handleToggleTask}
               onDelete={handleDeleteTask}
