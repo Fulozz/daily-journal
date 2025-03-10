@@ -39,6 +39,7 @@ export default function TasksPage() {
       const user = await getUser(token)
       const userId = user._id
       const response = await getTasks(token, userId)
+      fetchTasks()
       console.log(response)
       if (response) {
         setTasks(response)
@@ -99,6 +100,7 @@ export default function TasksPage() {
         toast.success("Task added successfully")
         setTasks([response.data, ...tasks])
         setShowTaskForm(false)
+        fetchTasks()
       }
     } catch (error) {
       console.error("Error adding task:", error)
@@ -166,6 +168,7 @@ export default function TasksPage() {
           completionDate: completionDate,
         })
       }
+      fetchTasks()
     } catch (error) {
       console.error("Error updating task:", error)
       if (error.response?.status === 404) {
@@ -205,6 +208,7 @@ export default function TasksPage() {
       const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...data } : task))
 
       setTasks(updatedTasks)
+      fetchTasks()
       setSelectedTask({ ...selectedTask, ...data })
     } catch (error) {
       console.error("Error updating task:", error)
@@ -236,6 +240,7 @@ export default function TasksPage() {
         setIsModalOpen(false)
         setSelectedTask(null)
       }
+      fetchTasks()
     } catch (error) {
       console.error("Error deleting task:", error)
       if (error.response?.status === 404) {
@@ -253,11 +258,13 @@ export default function TasksPage() {
         toast.error("Failed to delete task")
       }
     }
+    
   }
 
   const handleTaskClick = (task) => {
     setSelectedTask(task)
     setIsModalOpen(true)
+    
   }
 
   const handleEditTask = (task) => {
