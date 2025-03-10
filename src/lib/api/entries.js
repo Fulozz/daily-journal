@@ -4,7 +4,7 @@
  */
 import axios from "axios"
 import { getUser } from "@/lib/api/user"
-const API_BASE_URL = "https://daily-journal-backend-3bb6.onrender.com/api/v1"
+const API_BASE_URL = "https://daily-journal-backend-fsza.onrender.com/api/v1"
 
 /**
  * Get all journal entries for the authenticated user
