@@ -37,7 +37,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onClick }) 
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3" onClick={(e) => e.stopPropagation()}>
             <Checkbox
-              id={`task-${task.id}`}
+              id={`task-${task._id}`}
               checked={task.completed}
               onCheckedChange={() => onToggle(task._id)}
               className="mt-0.5"
@@ -88,7 +88,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onClick }) 
               size="icon"
               onClick={(e) => {
                 e.stopPropagation()
-                onDelete(task.id)
+                onDelete(task._id)
               }}
               className="h-8 w-8 text-destructive hover:text-destructive"
             >
