@@ -3,6 +3,7 @@
  * This module handles all server-side authentication-related API requests
  */
 import axios from "axios"
+import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 
 const API_BASE_URL = "https://daily-journal-backend-fsza.onrender.com/api/v1"
@@ -83,6 +84,13 @@ export async function validateTokenServer(token) {
         },
       },
     )
+    if(response.status === 404 || response.status === 401) {
+      const cookieStore = cookies()
+      cookieStore.delete("token")
+      return redirect("/login")
+      
+    }
+
     return response.status === 200
   } catch (error) {
     console.error("Token validation error:", error)
