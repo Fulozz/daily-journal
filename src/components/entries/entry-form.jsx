@@ -17,7 +17,7 @@ export default function EntryForm({ initialData, onSubmit, onCancel }) {
   } = useForm({
     defaultValues: {
       title: initialData?.title || "",
-      content: initialData?.content || "",
+      description: initialData?.description || "",
     },
   })
 
@@ -36,16 +36,16 @@ export default function EntryForm({ initialData, onSubmit, onCancel }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="content">{t("content")}</Label>
+        <Label htmlFor="description">{t("description")}</Label>
         <Textarea
-          id="content"
-          {...register("content", {
-            required: "Content is required",
+          id="description"
+          {...register("description", {
+            required: "description is required",
           })}
-          placeholder={t("content")}
+          placeholder={t("description")}
           className="min-h-[150px]"
         />
-        {errors.content && <p className="text-sm text-red-500">{errors.content.message}</p>}
+        {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
       </div>
 
       <div className="flex justify-end space-x-2">

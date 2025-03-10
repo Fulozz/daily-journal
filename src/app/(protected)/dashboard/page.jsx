@@ -128,8 +128,8 @@ export default function DashboardPage() {
 
       {isLoading ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="animate-pulse">
+          {[1, 2, 3].map((i, index) => (
+            <Card key={index} className="animate-pulse">
               <CardHeader>
                 <div className="h-5 bg-muted rounded w-1/2 mb-2"></div>
                 <div className="h-4 bg-muted rounded w-1/3"></div>
@@ -144,8 +144,8 @@ export default function DashboardPage() {
         </div>
       ) : filteredEntries.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredEntries.map((entry) => (
-            <EntryCard key={entry.id} entry={entry} onDelete={handleDeleteEntry} />
+          {filteredEntries.map((entry, index) => (
+            <EntryCard key={index} entry={entry} onDelete={handleDeleteEntry} />
           ))}
         </div>
       ) : (

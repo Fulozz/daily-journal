@@ -13,7 +13,8 @@ import { useLanguage } from "@/components/language-provider"
 import TaskItem from "@/components/tasks/task-item"
 import TaskForm from "@/components/tasks/task-form"
 import TaskDetailModal from "@/components/tasks/task-detail-modal"
-import { deleteTask, updateTask , getTasks } from "@/lib/api"
+import { deleteTask, updateTask , getTasks, createTask, getUser } from "@/lib/api"
+
 
 export default function TasksPage() {
   const { t } = useLanguage()
@@ -34,9 +35,11 @@ export default function TasksPage() {
   const fetchTasks = async () => {
     setIsLoading(true)
     const token = getCookie("token")
+    const user = getUser(token)
+    console.log(user)
 
     try {
-      const response = await getTasks(token)
+      const response = await getTasks(token, user.id)
 
       if (response.data) {
         setTasks(response.data)
@@ -82,14 +85,15 @@ export default function TasksPage() {
 
   const handleAddTask = async (taskData) => {
     const token = getCookie("token")
-
-    try {
-      const response = await axios.post("https://daily-journal-backend-3bb6.onrender.com/api/v1/tasks", taskData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
+    const data = {
+      title: taskData.title,
+      description: taskData.description,
+      completed: false,
+      dueDate: taskData.dueDate
+    }
+    try{
+      const response = createTask(token, data)
+      console.log(data)
       if (response.data) {
         toast.success("Task added successfully")
         setTasks([response.data, ...tasks])
@@ -194,8 +198,7 @@ export default function TasksPage() {
     const token = getCookie("token")
 
     try {
-      updateTask
-      put
+      await updateTask(token, data)
       toast.success("Task updated successfully")
 
       const updatedTasks = tasks.map((task) => (task.id === taskId ? { ...task, ...data } : task))

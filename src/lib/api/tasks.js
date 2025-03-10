@@ -3,8 +3,11 @@
  * This module handles all task-related API requests
  */
 import axios from "axios"
+import { getUser } from "@/lib/api/user"
+import { getAuthToken } from "@/lib/api/auth"
 
 const API_BASE_URL = "https://daily-journal-backend-3bb6.onrender.com/api/v1"
+
 
 /**
  * Get all tasks for the authenticated user
@@ -18,9 +21,9 @@ const API_BASE_URL = "https://daily-journal-backend-3bb6.onrender.com/api/v1"
  * // Get all tasks
  * const tasks = await getTasks("jwt_token_here");
  */
-export const getTasks = async (token) => {
+export const getTasks = async (token, userId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/tasks`, {
+    const response = await axios.get(`${API_BASE_URL}/tasks`,userId, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

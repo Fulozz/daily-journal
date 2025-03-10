@@ -3,7 +3,7 @@
  * This module handles all journal entry-related API requests
  */
 import axios from "axios"
-
+import { getUser } from "@/lib/api/user"
 const API_BASE_URL = "https://daily-journal-backend-3bb6.onrender.com/api/v1"
 
 /**
@@ -19,8 +19,10 @@ const API_BASE_URL = "https://daily-journal-backend-3bb6.onrender.com/api/v1"
  * const entries = await getEntries("jwt_token_here");
  */
 export const getEntries = async (token) => {
+  const user = getUser(token)
+  const userId = user.id
   try {
-    const response = await axios.get(`${API_BASE_URL}/entries`, {
+    const response = await axios.get(`${API_BASE_URL}/entries`,{ userId }, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -71,7 +73,10 @@ export const getEntries = async (token) => {
  * const newEntry = await createEntry("jwt_token_here", entryData);
  */
 export const createEntry = async (token, entryData) => {
+    const user = getUser(token)
+    const userId = user.id
   try {
+    entryData.userId === userId
     const response = await axios.post(`${API_BASE_URL}/entries`, entryData, {
       headers: {
         Authorization: `Bearer ${token}`,

@@ -16,6 +16,7 @@ export {
   export {
     updateUser,
     updatePassword,
+    getUser,
   } from "./user"
   
   // Entries API

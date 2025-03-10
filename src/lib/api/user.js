@@ -72,3 +72,22 @@ export const updatePassword = async (token, passwordData) => {
   }
 }
 
+
+
+export const getUser = async (token) => {
+  console.log(token)
+  try {
+    const response = await axios.get(`${API_BASE_URL}/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    console.log(response.data)
+    return response.data
+  }
+  catch (error) {
+    console.error("Get user error:", error)
+    throw error
+  }
+}
+
