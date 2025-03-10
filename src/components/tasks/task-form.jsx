@@ -27,6 +27,7 @@ export default function TaskForm({ initialData, onSubmit, onCancel }) {
       title: initialData?.title || "",
       description: initialData?.description || "",
       dueDate: initialData?.dueDate ? new Date(initialData.dueDate) : undefined,
+      userId: initialData?.userId || "",
     },
   })
 

@@ -37,7 +37,7 @@ export default function RegisterForm() {
   const onSubmit = async (data) => {
     setIsLoading(true)
     try {
-      const response = await axios.post("https://portfolio-backend-zpig.onrender.com/api/v1/register", {
+      const response = await axios.post("https://daily-journal-backend-fsza.onrender.com/api/v1/register", {
         name: data.name,
         email: data.email,
         password: data.password,

@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { useLanguage } from "@/components/language-provider"
 import EntryCard from "@/components/entries/entry-card"
 import EntryForm from "@/components/entries/entry-form"
-import { getEntries, createEntry, deleteEntry } from "@/lib/api"
+import { getEntries, createEntry, deleteEntry, getUser } from "@/lib/api"
 
 export default function DashboardPage() {
   const { t } = useLanguage()
@@ -40,9 +40,10 @@ export default function DashboardPage() {
   const fetchEntries = async () => {
     setIsLoading(true)
     const token = getCookie("token")
-
     try {
-      const entriesData = await getEntries(token)
+      const user = await getUser(token)
+      const userId = user._id
+      const entriesData = await getEntries(token, userId)
       setEntries(entriesData)
     } catch (error) {
       toast.error("Failed to fetch entries")

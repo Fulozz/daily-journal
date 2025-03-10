@@ -32,7 +32,7 @@ export default function LoginForm() {
   const onSubmit = async (data) => {
     setIsLoading(true)
     try {
-      const response = await axios.post("https://portfolio-backend-zpig.onrender.com/api/v1/login", data)
+      const response = await axios.post("https://daily-journal-backend-fsza.onrender.com/api/v1/login", data)
 
       if (response.data && response.data.token) {
         setCookie("token", response.data.token, { maxAge: 60 * 60 * 24 * 7 })

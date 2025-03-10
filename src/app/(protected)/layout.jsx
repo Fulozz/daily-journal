@@ -15,8 +15,7 @@ export default async function ProtectedLayout({ children }) {
   // Validate token
   try {
     await axios.post(
-      "https://portfolio-backend-zpig.onrender.com/api/v1/validate-token",
-      {}, // Empty body
+      "https://daily-journal-backend-fsza.onrender.com/api/v1/validate-token", {},
       {
         headers: {
           Authorization: `Bearer ${token}`,

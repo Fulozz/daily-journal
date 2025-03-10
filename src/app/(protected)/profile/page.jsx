@@ -62,7 +62,7 @@ export default function ProfilePage() {
     const token = getCookie("token")
 
     try {
-      const response = await axios.put("https://portfolio-backend-zpig.onrender.com/api/v1/user", data, {
+      const response = await axios.put("https://daily-journal-backend-fsza.onrender.com/api/v1/user", data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -98,7 +98,7 @@ export default function ProfilePage() {
 
     try {
       const response = await axios.put(
-        "https://portfolio-backend-zpig.onrender.com/api/v1/user/password",
+        "https://daily-journal-backend-fsza.onrender.com/api/v1/user/password",
         {
           currentPassword: data.currentPassword,
           newPassword: data.newPassword,

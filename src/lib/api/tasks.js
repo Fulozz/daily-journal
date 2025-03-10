@@ -23,7 +23,7 @@ const API_BASE_URL = "https://daily-journal-backend-fsza.onrender.com/api/v1"
  */
 export const getTasks = async (token, userId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/tasks`,userId, {
+    const response = await axios.get(`${API_BASE_URL}/tasks?userId=${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -82,9 +82,9 @@ export const getTasks = async (token, userId) => {
  * };
  * const newTask = await createTask("jwt_token_here", taskData);
  */
-export const createTask = async (token, taskData) => {
+export const createTask = async (token, taskData, userId) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/tasks`, taskData, {
+    const response = await axios.post(`${API_BASE_URL}/tasks?userId=${userId}`, taskData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -128,6 +128,7 @@ export const createTask = async (token, taskData) => {
  * const updatedTask = await updateTask("jwt_token_here", "task_id", taskData);
  */
 export const updateTask = async (token, taskId, taskData) => {
+ 
   try {
     const response = await axios.put(`${API_BASE_URL}/tasks/${taskId}`, taskData, {
       headers: {

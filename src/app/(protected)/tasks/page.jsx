@@ -35,14 +35,13 @@ export default function TasksPage() {
   const fetchTasks = async () => {
     setIsLoading(true)
     const token = getCookie("token")
-    const user = getUser(token)
-    console.log(user)
-
     try {
-      const response = await getTasks(token, user.id)
-
-      if (response.data) {
-        setTasks(response.data)
+      const user = await getUser(token)
+      const userId = user._id
+      const response = await getTasks(token, userId)
+      console.log(response)
+      if (response) {
+        setTasks(response)
       }
     } catch (error) {
       console.error("Error fetching tasks:", error)
@@ -85,14 +84,16 @@ export default function TasksPage() {
 
   const handleAddTask = async (taskData) => {
     const token = getCookie("token")
-    const data = {
-      title: taskData.title,
-      description: taskData.description,
-      completed: false,
-      dueDate: taskData.dueDate
-    }
     try{
-      const response = createTask(token, data)
+      const user = await getUser(token)
+      const userId = user._id
+      const data = {
+        title: taskData.title,
+        description: taskData.description,
+        completed: false,
+        dueDate: taskData.dueDate,
+      }
+      const response = await createTask(token, data, userId)
       console.log(data)
       if (response.data) {
         toast.success("Task added successfully")
@@ -120,7 +121,8 @@ export default function TasksPage() {
 
   const handleToggleTask = async (taskId) => {
     const token = getCookie("token")
-    const taskToUpdate = tasks.find((task) => task.id === taskId)
+    console.log(taskId ,"TASK ID")
+    const taskToUpdate = tasks.find((task) => task._id === taskId)
 
     if (!taskToUpdate) return
 
@@ -131,7 +133,7 @@ export default function TasksPage() {
     const completionDate = isCompleting ? new Date().toISOString() : null
 
     try {
-      await axios.patch(
+      await axios.put(
         `https://daily-journal-backend-3bb6.onrender.com/api/v1/tasks/${taskId}`,
         {
           completed: isCompleting,
@@ -196,12 +198,12 @@ export default function TasksPage() {
 
   const handleUpdateTask = async (taskId, data) => {
     const token = getCookie("token")
-
+    console.log(data)
     try {
       await updateTask(token, data)
       toast.success("Task updated successfully")
 
-      const updatedTasks = tasks.map((task) => (task.id === taskId ? { ...task, ...data } : task))
+      const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...data } : task))
 
       setTasks(updatedTasks)
       setSelectedTask({ ...selectedTask, ...data })
@@ -209,7 +211,7 @@ export default function TasksPage() {
       console.error("Error updating task:", error)
       if (error.response?.status === 404) {
         // API endpoint not found, update mock data
-        const updatedTasks = tasks.map((task) => (task.id === taskId ? { ...task, ...data } : task))
+        const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...data } : task))
 
         setTasks(updatedTasks)
         setSelectedTask({ ...selectedTask, ...data })

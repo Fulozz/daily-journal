@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge"
 
 export default function TaskItem({ task, onToggle, onDelete, onEdit, onClick }) {
   const { t, language } = useLanguage()
-
   const formatDate = (dateString) => {
     try {
       return formatDistanceToNow(new Date(dateString), {
@@ -40,12 +39,12 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onClick }) 
             <Checkbox
               id={`task-${task.id}`}
               checked={task.completed}
-              onCheckedChange={() => onToggle(task.id)}
+              onCheckedChange={() => onToggle(task._id)}
               className="mt-0.5"
             />
             <div>
               <label
-                htmlFor={`task-${task.id}`}
+                htmlFor={`task-${task._id}`}
                 className={`font-medium ${task.completed ? "line-through text-muted-foreground" : ""}`}
               >
                 {task.title}

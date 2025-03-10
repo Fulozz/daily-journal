@@ -12,6 +12,7 @@ import TaskForm from "@/components/tasks/task-form"
 import { Badge } from "@/components/ui/badge"
 
 export default function TaskDetailModal({ task, isOpen, onClose, onToggle, onUpdate }) {
+  console.log(task)
   const { t, language } = useLanguage()
   const [isEditing, setIsEditing] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -90,7 +91,7 @@ export default function TaskDetailModal({ task, isOpen, onClose, onToggle, onUpd
                 <Checkbox
                   id="task-modal-checkbox"
                   checked={task.completed}
-                  onCheckedChange={() => onToggle(task.id)}
+                  onCheckedChange={() => onToggle(task._id)}
                   className="mt-1"
                 />
                 <div>

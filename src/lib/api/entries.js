@@ -18,11 +18,11 @@ const API_BASE_URL = "https://daily-journal-backend-fsza.onrender.com/api/v1"
  * // Get all entries
  * const entries = await getEntries("jwt_token_here");
  */
-export const getEntries = async (token) => {
-  const user = getUser(token)
-  const userId = user.id
+export const getEntries = async (token , userId) => {
+  console.log(userId)
+  console.log(token)
   try {
-    const response = await axios.get(`${API_BASE_URL}/entries`,{ userId }, {
+    const response = await axios.get(`${API_BASE_URL}/entries?userId=${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
