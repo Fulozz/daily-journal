@@ -39,7 +39,6 @@ export default function TasksPage() {
       const user = await getUser(token)
       const userId = user._id
       const response = await getTasks(token, userId)
-      fetchTasks()
       console.log(response)
       if (response) {
         setTasks(response)
@@ -264,7 +263,7 @@ export default function TasksPage() {
   const handleTaskClick = (task) => {
     setSelectedTask(task)
     setIsModalOpen(true)
-    
+
   }
 
   const handleEditTask = (task) => {
