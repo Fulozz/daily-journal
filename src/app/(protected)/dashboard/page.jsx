@@ -34,7 +34,10 @@ export default function DashboardPage() {
       }
     }
 
-    fetchEntries()
+    const intervalId = setInterval(fetchEntries, 2000); // Chama fetchEntries a cada 2 segundos
+
+    // Limpa o intervalo quando o componente é desmontado
+    return () => clearInterval(intervalId);
   }, [])
 
   const fetchEntries = async () => {

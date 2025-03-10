@@ -29,7 +29,11 @@ export default function TasksPage() {
 
   useEffect(() => {
     setMounted(true)
-    fetchTasks()
+
+    const intervalId = setInterval(fetchTasks, 2000); // Chama fetchEntries a cada 2 segundos
+
+    // Limpa o intervalo quando o componente é desmontado
+    return () => clearInterval(intervalId);
   }, [])
 
   const fetchTasks = async () => {
