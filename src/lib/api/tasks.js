@@ -214,7 +214,7 @@ export const toggleTaskCompletion = async (token, taskId, completed) => {
 export const deleteTask = async (token, taskData) => {
 
   try {
-    const response = await axios.delete(`${API_BASE_URL}/tasks`, data, {
+    const response = await axios.delete(`${API_BASE_URL}/tasks`, taskData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

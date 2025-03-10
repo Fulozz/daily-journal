@@ -230,11 +230,11 @@ export default function TasksPage() {
     try {
       const user = await getUser(token)
       const userId = user._id
-      const data = {
+      const taskData = {
         userId: userId,
         taskId: taskId
       }
-      await deleteTask(token, data)
+      await deleteTask(token, taskData)
 
       toast.success("Task deleted successfully")
       setTasks(tasks.filter((task) => task._id !== taskId))
