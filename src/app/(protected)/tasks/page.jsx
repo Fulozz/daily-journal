@@ -228,7 +228,13 @@ export default function TasksPage() {
     const token = getCookie("token")
     
     try {
-      await deleteTask(token, taskId)
+      const user = await getUser(token)
+      const userId = user._id
+      const data = {
+        userId: userId,
+        taskId: taskId
+      }
+      await deleteTask(token, data)
 
       toast.success("Task deleted successfully")
       setTasks(tasks.filter((task) => task._id !== taskId))
