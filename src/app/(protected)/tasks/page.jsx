@@ -94,7 +94,7 @@ export default function TasksPage() {
         dueDate: taskData.dueDate,
       }
       const response = await createTask(token, data, userId)
-      console.log(data)
+
       if (response.data) {
         toast.success("Task added successfully")
         setTasks([response.data, ...tasks])
@@ -121,7 +121,6 @@ export default function TasksPage() {
 
   const handleToggleTask = async (taskId) => {
     const token = getCookie("token")
-    console.log(taskId ,"TASK ID")
     const taskToUpdate = tasks.find((task) => task._id === taskId)
 
     if (!taskToUpdate) return
@@ -199,7 +198,6 @@ export default function TasksPage() {
 
   const handleUpdateTask = async (taskId, data) => {
     const token = getCookie("token")
-    console.log(data)
     try {
       await updateTask(token, data)
       toast.success("Task updated successfully")

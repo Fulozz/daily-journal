@@ -58,6 +58,7 @@ export default function DashboardPage() {
     try {
       const user = await getUser(token)
       const userId = user._id
+      console.log(userId)
       entryData.userId = userId
       const newEntry = await createEntry(token, entryData)
       toast.success("Entry added successfully")
