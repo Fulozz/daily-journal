@@ -39,7 +39,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onClick }) 
             <Checkbox
               id={`task-${task._id}`}
               checked={task.completed}
-              onCheckedChange={() => onToggle(task.id)}
+              onCheckedChange={() => onToggle(task._id)}
               className="mt-0.5"
             />
             <div>

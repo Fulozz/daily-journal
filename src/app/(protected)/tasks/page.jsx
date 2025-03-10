@@ -232,10 +232,10 @@ export default function TasksPage() {
       await deleteTask(token, taskId)
 
       toast.success("Task deleted successfully")
-      setTasks(tasks.filter((task) => task.id !== taskId))
+      setTasks(tasks.filter((task) => task._id !== taskId))
 
       // Close modal if the deleted task is the selected one
-      if (selectedTask && selectedTask.id === taskId) {
+      if (selectedTask && selectedTask._id === taskId) {
         setIsModalOpen(false)
         setSelectedTask(null)
       }

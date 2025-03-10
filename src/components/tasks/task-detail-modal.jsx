@@ -59,7 +59,7 @@ export default function TaskDetailModal({ task, isOpen, onClose, onToggle, onUpd
   }
 
   const handleUpdate = (data) => {
-    onUpdate(task.id, data)
+    onUpdate(task._id, data)
     setIsEditing(false)
   }
 
