@@ -133,7 +133,7 @@ export default function TasksPage() {
     const completionDate = isCompleting ? new Date().toISOString() : null
 
     try {
-      await axios.put(
+      await axios.patch(
         `https://daily-journal-backend-3bb6.onrender.com/api/v1/tasks/${taskId}`,
         {
           completed: isCompleting,
@@ -142,6 +142,7 @@ export default function TasksPage() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
         },
       )

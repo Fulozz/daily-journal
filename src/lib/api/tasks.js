@@ -130,9 +130,10 @@ export const createTask = async (token, taskData, userId) => {
 export const updateTask = async (token, taskId, taskData) => {
  
   try {
-    const response = await axios.put(`${API_BASE_URL}/tasks/${taskId}`, taskData, {
+    const response = await axios.patch(`${API_BASE_URL}/tasks/${taskId}`, taskData, {
       headers: {
         Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
     })
     return response.data
@@ -170,12 +171,13 @@ export const updateTask = async (token, taskId, taskData) => {
  */
 export const toggleTaskCompletion = async (token, taskId, completed) => {
   try {
-    const response = await axios.put(
+    const response = await axios.patch(
       `${API_BASE_URL}/tasks/${taskId}`,
       { completed },
       {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       },
     )
