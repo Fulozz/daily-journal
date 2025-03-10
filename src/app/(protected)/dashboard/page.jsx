@@ -71,7 +71,7 @@ export default function DashboardPage() {
     try {
       await deleteEntry(token, entryId)
       toast.success("Entry deleted successfully")
-      setEntries(entries.filter((entry) => entry.id !== entryId))
+      setEntries(entries.filter((entry) => entry._id !== entryId))
     } catch (error) {
       toast.error("Failed to delete entry")
     }

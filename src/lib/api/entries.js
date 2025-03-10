@@ -74,7 +74,7 @@ export const getEntries = async (token , userId) => {
  */
 export const createEntry = async (token, entryData) => {
     const user = getUser(token)
-    const userId = user.id
+    const userId = user._id
   try {
     entryData.userId === userId
     const response = await axios.post(`${API_BASE_URL}/entries`, entryData, {
