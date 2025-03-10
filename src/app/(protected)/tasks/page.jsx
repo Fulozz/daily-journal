@@ -226,7 +226,6 @@ export default function TasksPage() {
 
   const handleDeleteTask = async (taskId) => {
     const token = getCookie("token")
-    console.log(taskId)
     
     try {
       await deleteTask(token, taskId)

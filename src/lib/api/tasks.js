@@ -211,9 +211,10 @@ export const toggleTaskCompletion = async (token, taskId, completed) => {
  * // Delete a task
  * const response = await deleteTask("jwt_token_here", "task_id");
  */
-export const deleteTask = async (token, taskId) => {
+export const deleteTask = async (token, taskData) => {
+
   try {
-    const response = await axios.delete(`${API_BASE_URL}/tasks/${taskId}`, {
+    const response = await axios.delete(`${API_BASE_URL}/tasks`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
