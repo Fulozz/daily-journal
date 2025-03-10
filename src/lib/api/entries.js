@@ -73,8 +73,6 @@ export const getEntries = async (token , userId) => {
  * const newEntry = await createEntry("jwt_token_here", entryData);
  */
 export const createEntry = async (token, entryData) => {
-    const user = getUser(token)
-    const userId = user._id
   try {
     entryData.userId === userId
     const response = await axios.post(`${API_BASE_URL}/entries`, entryData, {
