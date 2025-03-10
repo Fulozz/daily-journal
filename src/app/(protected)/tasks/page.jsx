@@ -160,7 +160,7 @@ export default function TasksPage() {
       )
 
       // Update selected task if it's the one being toggled
-      if (selectedTask && selectedTask.id === taskId) {
+      if (selectedTask && selectedTask._id === taskId) {
         setSelectedTask({
           ...selectedTask,
           completed: isCompleting,
@@ -174,7 +174,7 @@ export default function TasksPage() {
         // API endpoint not found, update mock data
         setTasks(
           tasks.map((task) =>
-            task.id === taskId
+            task._id === taskId
               ? {
                   ...task,
                   completed: isCompleting,
@@ -185,7 +185,7 @@ export default function TasksPage() {
         )
 
         // Update selected task if it's the one being toggled
-        if (selectedTask && selectedTask.id === taskId) {
+        if (selectedTask && selectedTask._id === taskId) {
           setSelectedTask({
             ...selectedTask,
             completed: isCompleting,
