@@ -57,7 +57,7 @@ export async function getUserServer() {
  */
 export async function isAuthenticatedServer() {
   const token = await getAuthTokenServer()
-  return !!token
+  return token
 }
 
 /**

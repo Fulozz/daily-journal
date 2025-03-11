@@ -3,8 +3,7 @@
  * This module handles all task-related API requests
  */
 import axios from "axios"
-import { getUser } from "@/lib/api/user"
-import { getAuthToken } from "@/lib/api/auth"
+
 
 const API_BASE_URL = "https://daily-journal-backend-fsza.onrender.com/api/v1"
 
@@ -21,9 +20,9 @@ const API_BASE_URL = "https://daily-journal-backend-fsza.onrender.com/api/v1"
  * // Get all tasks
  * const tasks = await getTasks("jwt_token_here");
  */
-export const getTasks = async (token, userId) => {
+export const getTasks = async (token, ) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/tasks?userId=${userId}`, {
+    const response = await axios.get(`${API_BASE_URL}/tasks`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -82,9 +81,9 @@ export const getTasks = async (token, userId) => {
  * };
  * const newTask = await createTask("jwt_token_here", taskData);
  */
-export const createTask = async (token, taskData, userId) => {
+export const createTask = async (token, taskData,) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/tasks?userId=${userId}`, taskData, {
+    const response = await axios.post(`${API_BASE_URL}/tasks`, taskData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -127,13 +126,12 @@ export const createTask = async (token, taskData, userId) => {
  * };
  * const updatedTask = await updateTask("jwt_token_here", "task_id", taskData);
  */
-export const updateTask = async (token, taskId, taskData) => {
+export const updateTask = async (token, taskData) => {
  
   try {
-    const response = await axios.patch(`${API_BASE_URL}/tasks/${taskId}`, taskData, {
+    const response = await axios.put(`${API_BASE_URL}/tasks/update`, taskData, {
       headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
     })
     return response.data
@@ -171,7 +169,7 @@ export const updateTask = async (token, taskId, taskData) => {
  */
 export const toggleTaskCompletion = async (token, taskId, completed) => {
   try {
-    const response = await axios.patch(
+    const response = await axios.put(
       `${API_BASE_URL}/tasks/${taskId}`,
       { completed },
       {
@@ -211,13 +209,13 @@ export const toggleTaskCompletion = async (token, taskId, completed) => {
  * // Delete a task
  * const response = await deleteTask("jwt_token_here", "task_id");
  */
-export const deleteTask = async (token, taskData) => {
-
+export const deleteTask = async (token, taskId) => {
+  console.log(token)
   try {
-    const response = await axios.delete(`${API_BASE_URL}/tasks`, taskData, {
+    const response = await axios.delete(`${API_BASE_URL}/tasks/${taskId}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
-      },
+        Authorization: `Bearer ${token}`
+      }
     })
     return response.data
   } catch (error) {

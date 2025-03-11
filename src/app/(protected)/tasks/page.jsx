@@ -27,19 +27,23 @@ export default function TasksPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
 
+  // Adicione um estado para controlar o recarregamento
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
+
   useEffect(() => {
     setMounted(true)
     fetchTasks()
-  }, [])
+  }, [refreshTrigger])
 
+  // Função para forçar o recarregamento dos dados
+  const refreshTasks = () => {
+    setRefreshTrigger((prev) => prev + 1)
+  }
   const fetchTasks = async () => {
     setIsLoading(true)
     const token = getCookie("token")
     try {
-      const user = await getUser(token)
-      const userId = user._id
-      const response = await getTasks(token, userId)
-      console.log(response)
+      const response = await getTasks(token)
       if (response) {
         setTasks(response)
       }
@@ -133,7 +137,7 @@ export default function TasksPage() {
     const completionDate = isCompleting ? new Date().toISOString() : null
 
     try {
-      await axios.patch(
+      await axios.put(
         `https://daily-journal-backend-3bb6.onrender.com/api/v1/tasks/${taskId}`,
         {
           completed: isCompleting,
@@ -201,7 +205,7 @@ export default function TasksPage() {
   const handleUpdateTask = async (taskId, data) => {
     const token = getCookie("token")
     try {
-      await updateTask(token, data)
+      await updateTask(token,  data)
       toast.success("Task updated successfully")
 
       const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...data } : task))
@@ -226,16 +230,9 @@ export default function TasksPage() {
 
   const handleDeleteTask = async (taskId) => {
     const token = getCookie("token")
-    
     try {
-      const user = await getUser(token)
-      const userId = user._id
-      const taskData = {
-        userId: userId,
-        taskId: taskId
-      }
-      await deleteTask(token, taskData)
-
+      
+      await deleteTask(token, taskId)
       toast.success("Task deleted successfully")
       setTasks(tasks.filter((task) => task._id !== taskId))
 

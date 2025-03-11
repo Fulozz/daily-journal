@@ -18,9 +18,9 @@ const API_BASE_URL = "https://daily-journal-backend-fsza.onrender.com/api/v1"
  * // Get all entries
  * const entries = await getEntries("jwt_token_here");
  */
-export const getEntries = async (token , userId) => {
+export const getEntries = async (token) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/entries?userId=${userId}`, {
+    const response = await axios.get(`${API_BASE_URL}/entries`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -71,6 +71,7 @@ export const getEntries = async (token , userId) => {
  * const newEntry = await createEntry("jwt_token_here", entryData);
  */
 export const createEntry = async (token, entryData) => {
+  console.log(entryData)
   try {
     const response = await axios.post(`${API_BASE_URL}/entries`, entryData, {
       headers: {

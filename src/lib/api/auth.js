@@ -4,6 +4,7 @@
  */
 import axios from "axios"
 import { getCookie } from "cookies-next"
+import { deleteCookie } from "cookies-next"
 
 const API_BASE_URL = "https://daily-journal-backend-fsza.onrender.com/api/v1"
 
@@ -96,7 +97,6 @@ export const validateToken = async (token) => {
     return false
   }
 }
-
 /**
  * Get auth token from cookies (client-side)
  *
@@ -108,6 +108,19 @@ export const validateToken = async (token) => {
  */
 export function getAuthToken() {
   return getCookie("token")
+}
+
+/**
+ * Remove a cookie by name (client-side)
+ *
+ * @param {string} cookieName - The name of the cookie to remove
+ *
+ * @example
+ * // Remove a cookie
+ * removeCookie("token");
+ */
+export function removeCookie(cookieName) {
+  deleteCookie(cookieName)
 }
 
 /**

@@ -10,6 +10,7 @@ export {
     validateToken,
     getAuthToken,
     getUserFromCookie,
+    removeCookie,
   } from "./auth"
   
   // User API

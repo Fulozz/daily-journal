@@ -31,7 +31,7 @@ export default function EntryCard({ entry, onDelete, onUpdate }) {
           <EntryForm
             initialData={entry}
             onSubmit={(data) => {
-              onUpdate?.(entry.id, data)
+              onUpdate?.(entry._id, data)
               setIsEditing(false)
             }}
             onCancel={() => setIsEditing(false)}
@@ -58,7 +58,7 @@ export default function EntryCard({ entry, onDelete, onUpdate }) {
                 <Edit className="mr-2 h-4 w-4" />
                 <span>{t("edit")}</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(entry.id)} className="text-destructive focus:text-destructive">
+              <DropdownMenuItem onClick={() => onDelete(entry._id)} className="text-destructive focus:text-destructive">
                 <Trash className="mr-2 h-4 w-4" />
                 <span>{t("delete")}</span>
               </DropdownMenuItem>

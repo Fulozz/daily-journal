@@ -7,6 +7,7 @@ import { isAuthenticatedServer } from "@/lib/api/auth-server"
 export default async function LoginPage() {
   // If user is already logged in, redirect to dashboard
   const isAuthenticated = await isAuthenticatedServer()
+  console.log(isAuthenticated)
   if (isAuthenticated) {
     redirect("/dashboard")
   }
