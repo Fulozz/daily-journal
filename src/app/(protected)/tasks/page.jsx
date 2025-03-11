@@ -44,6 +44,7 @@ export default function TasksPage() {
     const token = getCookie("token")
     try {
       const response = await getTasks(token)
+      console.log(response)
       if (response) {
         setTasks(response)
       }
