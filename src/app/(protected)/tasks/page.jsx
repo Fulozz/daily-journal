@@ -13,7 +13,7 @@ import { useLanguage } from "@/components/language-provider"
 import TaskItem from "@/components/tasks/task-item"
 import TaskForm from "@/components/tasks/task-form"
 import TaskDetailModal from "@/components/tasks/task-detail-modal"
-import { deleteTask, updateTask , getTasks, createTask, getUser } from "@/lib/api"
+import { deleteTask, updateTask , getTasks, createTask, getUser, toggleTaskCompletion } from "@/lib/api"
 
 
 export default function TasksPage() {
@@ -88,6 +88,11 @@ export default function TasksPage() {
 
   const handleAddTask = async (taskData) => {
     const token = getCookie("token")
+
+    // Evita múltiplos envios
+    if (isLoading) return
+
+
     try{
       const user = await getUser(token)
       const userId = user._id
@@ -102,8 +107,8 @@ export default function TasksPage() {
       if (response.data) {
         toast.success("Task added successfully")
         setTasks([response.data, ...tasks])
+        refreshTasks() // Recarrega os dados após adicionar
         setShowTaskForm(false)
-        fetchTasks()
       }
     } catch (error) {
       console.error("Error adding task:", error)
@@ -125,82 +130,39 @@ export default function TasksPage() {
   }
 
   const handleToggleTask = async (taskId) => {
-    const token = getCookie("token")
-    const taskToUpdate = tasks.find((task) => task._id === taskId)
-
-    if (!taskToUpdate) return
-
-    // Determine if we're completing or uncompleting the task
-    const isCompleting = !taskToUpdate.completed
-
-    // Set or clear the completion date based on the new status
-    const completionDate = isCompleting ? new Date().toISOString() : null
-
     try {
-      await axios.put(
-        `https://daily-journal-backend-3bb6.onrender.com/api/v1/tasks/${taskId}`,
-        {
-          completed: isCompleting,
-          completionDate: completionDate,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      )
-
-      setTasks(
-        tasks.map((task) =>
-          task.id === taskId
+      const token = getCookie("token");
+      const response = await toggleTaskCompletion(token, taskId);
+      
+      if (response && response.task) {
+        // Atualizar o estado local para feedback imediato
+        setTasks(tasks.map(task => 
+          task.id === taskId 
             ? {
                 ...task,
-                completed: isCompleting,
-                completionDate: completionDate,
-              }
-            : task,
-        ),
-      )
-
-      // Update selected task if it's the one being toggled
-      if (selectedTask && selectedTask._id === taskId) {
-        setSelectedTask({
-          ...selectedTask,
-          completed: isCompleting,
-          completionDate: completionDate,
-        })
-      }
-      fetchTasks()
-    } catch (error) {
-      console.error("Error updating task:", error)
-      if (error.response?.status === 404) {
-        // API endpoint not found, update mock data
-        setTasks(
-          tasks.map((task) =>
-            task._id === taskId
-              ? {
-                  ...task,
-                  completed: isCompleting,
-                  completionDate: completionDate,
-                }
-              : task,
-          ),
-        )
-
-        // Update selected task if it's the one being toggled
-        if (selectedTask && selectedTask._id === taskId) {
+                completed: response.task.completed,
+                completionDate: response.task.completionDate
+              } 
+            : task
+        ));
+        
+        // Atualizar a tarefa selecionada se for a que está sendo alternada
+        if (selectedTask && selectedTask.id === taskId) {
           setSelectedTask({
             ...selectedTask,
-            completed: isCompleting,
-            completionDate: completionDate,
-          })
+            completed: response.task.completed,
+            completionDate: response.task.completionDate
+          });
         }
-      } else {
-        toast.error("Failed to update task")
+        
+        // Opcional: recarregar os dados após um pequeno delay
+        setTimeout(refreshTasks, 300);
       }
+    } catch (error) {
+      console.error("Error toggling task:", error);
+      toast.error("Failed to update task status");
     }
-  }
+  };
 
   const handleUpdateTask = async (taskId, data) => {
     const token = getCookie("token")
@@ -211,7 +173,8 @@ export default function TasksPage() {
       const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...data } : task))
 
       setTasks(updatedTasks)
-      fetchTasks()
+      // Recarrega os dados após um pequeno delay
+      setTimeout(refreshTasks, 300)
       setSelectedTask({ ...selectedTask, ...data })
     } catch (error) {
       console.error("Error updating task:", error)
@@ -241,7 +204,8 @@ export default function TasksPage() {
         setIsModalOpen(false)
         setSelectedTask(null)
       }
-      fetchTasks()
+      // Recarrega os dados após um pequeno delay
+      setTimeout(refreshTasks, 300)
     } catch (error) {
       console.error("Error deleting task:", error)
       if (error.response?.status === 404) {
