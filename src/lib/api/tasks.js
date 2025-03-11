@@ -170,8 +170,8 @@ export const updateTask = async (token, taskData) => {
 export const toggleTaskCompletion = async (token, taskId, completed) => {
   try {
     const response = await axios.patch(
-      `${API_BASE_URL}/tasks/${taskId}/toggle`,
-      {}, // Corpo vazio, pois estamos apenas alternando o status
+      `${API_BASE_URL}/tasks/toggle/${taskId}`,
+      {}, // Corpo vazio, pois estamos apenas alternando o status Teste de atualização
       {
         headers: {
           Authorization: `Bearer ${token}`
