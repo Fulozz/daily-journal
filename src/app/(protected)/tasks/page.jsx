@@ -13,7 +13,7 @@ import { useLanguage } from "@/components/language-provider"
 import TaskItem from "@/components/tasks/task-item"
 import TaskForm from "@/components/tasks/task-form"
 import TaskDetailModal from "@/components/tasks/task-detail-modal"
-import { deleteTask, updateTask , getTasks, createTask, getUser, toggleTaskCompletion } from "@/lib/api"
+import { deleteTask, updateTask , getTasks, createTask, getUser } from "@/lib/api"
 
 
 export default function TasksPage() {
@@ -22,20 +22,18 @@ export default function TasksPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [showTaskForm, setShowTaskForm] = useState(false)
-  const [activeTab, setActiveTab] = useState("incomplete")
+  const [activeTab, setActiveTab] = useState("all")
   const [selectedTask, setSelectedTask] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
-
-  // Adicione um estado para controlar o recarregamento
   const [refreshTrigger, setRefreshTrigger] = useState(0)
+
 
   useEffect(() => {
     setMounted(true)
     fetchTasks()
   }, [refreshTrigger])
 
-  // Função para forçar o recarregamento dos dados
   const refreshTasks = () => {
     setRefreshTrigger((prev) => prev + 1)
   }
@@ -43,7 +41,9 @@ export default function TasksPage() {
     setIsLoading(true)
     const token = getCookie("token")
     try {
-      const response = await getTasks(token)
+      const user = await getUser(token)
+      const userId = user._id
+      const response = await getTasks(token, userId)
       console.log(response)
       if (response) {
         setTasks(response)
@@ -89,11 +89,7 @@ export default function TasksPage() {
 
   const handleAddTask = async (taskData) => {
     const token = getCookie("token")
-
-    // Evita múltiplos envios
-    if (isLoading) return
-
-
+    if(isLoading) return
     try{
       const user = await getUser(token)
       const userId = user._id
@@ -108,7 +104,7 @@ export default function TasksPage() {
       if (response.data) {
         toast.success("Task added successfully")
         setTasks([response.data, ...tasks])
-        refreshTasks() // Recarrega os dados após adicionar
+        refreshTasks()
         setShowTaskForm(false)
       }
     } catch (error) {
@@ -131,61 +127,105 @@ export default function TasksPage() {
   }
 
   const handleToggleTask = async (taskId) => {
+    const token = getCookie("token")
+
+    if(isLoading) return
+    const taskToUpdate = tasks.find((task) => task._id === taskId)
+
+    if (!taskToUpdate) return
+
+    // Determine if we're completing or uncompleting the task
+    const isCompleting = !taskToUpdate.completed
+
+    // Set or clear the completion date based on the new status
+    const completionDate = isCompleting ? new Date().toISOString() : null
+
     try {
-      const token = getCookie("token");
-      const response = await toggleTaskCompletion(token, taskId);
-      
-      if (response && response.task) {
-        // Atualizar o estado local para feedback imediato
-        setTasks(tasks.map(task => 
-          task.id === taskId 
+      await axios.patch(
+        `https://daily-journal-backend-3bb6.onrender.com/api/v1/tasks/${taskId}`,
+        {
+          completed: isCompleting,
+          completionDate: completionDate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+
+      setTasks(
+        tasks.map((task) =>
+          task.id === taskId
             ? {
                 ...task,
-                completed: response.task.completed,
-                completionDate: response.task.completionDate
-              } 
-            : task
-        ));
-        
-        // Atualizar a tarefa selecionada se for a que está sendo alternada
-        if (selectedTask && selectedTask.id === taskId) {
-          setSelectedTask({
-            ...selectedTask,
-            completed: response.task.completed,
-            completionDate: response.task.completionDate
-          });
-        }
-        
-        // Opcional: recarregar os dados após um pequeno delay
-        setTimeout(refreshTasks, 300);
+                completed: isCompleting,
+                completionDate: completionDate,
+              }
+            : task,
+        ),
+      )
+      refreshTasks()
+      // Update selected task if it's the one being toggled
+      if (selectedTask && selectedTask._id === taskId) {
+        setSelectedTask({
+          ...selectedTask,
+          completed: isCompleting,
+          completionDate: completionDate,
+        })
       }
-    } catch (error) {
-      console.error("Error toggling task:", error);
-      toast.error("Failed to update task status");
-    }
-  };
-
-  const handleUpdateTask = async (taskId, taskData) => {
-    const token = getCookie("token")
-    try {
-      taskData.taskId  = taskId
-      await updateTask(token,  taskData)
-      toast.success("Task updated successfully")
-
-      const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...taskData } : task))
-
-      setTasks(updatedTasks)
-      // Recarrega os dados após um pequeno delay
-      setTimeout(refreshTasks, 300)
-      setSelectedTask({ ...selectedTask, ...taskData })
+      
     } catch (error) {
       console.error("Error updating task:", error)
       if (error.response?.status === 404) {
         // API endpoint not found, update mock data
-        const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...taskData } : task))
+        setTasks(
+          tasks.map((task) =>
+            task._id === taskId
+              ? {
+                  ...task,
+                  completed: isCompleting,
+                  completionDate: completionDate,
+                }
+              : task,
+          ),
+        )
+
+        // Update selected task if it's the one being toggled
+        if (selectedTask && selectedTask._id === taskId) {
+          setSelectedTask({
+            ...selectedTask,
+            completed: isCompleting,
+            completionDate: completionDate,
+          })
+        }
+      } else {
+        toast.error("Failed to update task")
+      }
+    }
+  }
+
+  const handleUpdateTask = async (taskId, data) => {
+    const token = getCookie("token")
+    if(isLoading) return
+    try {
+      await updateTask(token, data)
+      toast.success("Task updated successfully")
+
+      const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...data } : task))
+
+      setTasks(updatedTasks)
+      setSelectedTask({ ...selectedTask, ...data })
+      refreshTasks()
+    } catch (error) {
+      console.error("Error updating task:", error)
+      if (error.response?.status === 404) {
+        // API endpoint not found, update mock data
+        const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...data } : task))
 
         setTasks(updatedTasks)
-        setSelectedTask({ ...selectedTask, ...taskData })
+        setSelectedTask({ ...selectedTask, ...data })
         toast.success("Task updated successfully")
       } else {
         toast.error("Failed to update task")
@@ -195,24 +235,27 @@ export default function TasksPage() {
 
   const handleDeleteTask = async (taskId) => {
     const token = getCookie("token")
+    if(isLoading) return
+    console.log(taskId)
+    
     try {
-      
       await deleteTask(token, taskId)
+
       toast.success("Task deleted successfully")
       setTasks(tasks.filter((task) => task._id !== taskId))
 
       // Close modal if the deleted task is the selected one
       if (selectedTask && selectedTask._id === taskId) {
         setIsModalOpen(false)
-        setSelectedTask(null)
+        refreshTasks()
+        setSelectedTask(null)        
       }
-      // Recarrega os dados após um pequeno delay
-      setTimeout(refreshTasks, 300)
+      refreshTasks()
     } catch (error) {
       console.error("Error deleting task:", error)
       if (error.response?.status === 404) {
         // API endpoint not found, remove from mock data
-        setTasks(tasks.filter((task) => task._id !== taskId))
+        setTasks(tasks.filter((task) => task.id !== taskId))
 
         // Close modal if the deleted task is the selected one
         if (selectedTask && selectedTask.id === taskId) {
@@ -291,9 +334,9 @@ export default function TasksPage() {
 
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-6">
         <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="all">{t("all")}</TabsTrigger>
           <TabsTrigger value="incomplete">{t("incomplete")}</TabsTrigger>
           <TabsTrigger value="completed">{t("completed")}</TabsTrigger>
-          <TabsTrigger value="all">{t("all")}</TabsTrigger>
         </TabsList>
       </Tabs>
 
