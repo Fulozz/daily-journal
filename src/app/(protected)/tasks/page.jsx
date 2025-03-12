@@ -285,9 +285,9 @@ export default function TasksPage() {
 
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="all">{t("all")}</TabsTrigger>
           <TabsTrigger value="incomplete">{t("incomplete")}</TabsTrigger>
           <TabsTrigger value="completed">{t("completed")}</TabsTrigger>
+          <TabsTrigger value="all">{t("all")}</TabsTrigger>
         </TabsList>
       </Tabs>
 
