@@ -13,7 +13,7 @@ import { useLanguage } from "@/components/language-provider"
 import TaskItem from "@/components/tasks/task-item"
 import TaskForm from "@/components/tasks/task-form"
 import TaskDetailModal from "@/components/tasks/task-detail-modal"
-import { deleteTask, updateTask , getTasks, createTask, getUser } from "@/lib/api"
+import { deleteTask, updateTask , getTasks, createTask, getUser, toggleTaskCompletion } from "@/lib/api"
 
 
 export default function TasksPage() {
@@ -26,25 +26,23 @@ export default function TasksPage() {
   const [selectedTask, setSelectedTask] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const [refreshTrigger, setRefreshTrigger] = useState(0)
 
+
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
 
   useEffect(() => {
     setMounted(true)
-    fetchTasks()
   }, [refreshTrigger])
 
   const refreshTasks = () => {
     setRefreshTrigger((prev) => prev + 1)
   }
+
   const fetchTasks = async () => {
     setIsLoading(true)
     const token = getCookie("token")
     try {
-      const user = await getUser(token)
-      const userId = user._id
-      const response = await getTasks(token, userId)
-      console.log(response)
+      const response = await getTasks(token)
       if (response) {
         setTasks(response)
       }
@@ -89,8 +87,10 @@ export default function TasksPage() {
 
   const handleAddTask = async (taskData) => {
     const token = getCookie("token")
-    if(isLoading) return
-    try{
+
+    if (isLoading) return
+
+    try {
       const user = await getUser(token)
       const userId = user._id
       const data = {
@@ -110,7 +110,6 @@ export default function TasksPage() {
     } catch (error) {
       console.error("Error adding task:", error)
       if (error.response?.status === 404) {
-        // API endpoint not found, add to mock data
         const newTask = {
           id: Date.now().toString(),
           ...taskData,
@@ -127,88 +126,41 @@ export default function TasksPage() {
   }
 
   const handleToggleTask = async (taskId) => {
-    const token = getCookie("token")
-
-    if(isLoading) return
-    const taskToUpdate = tasks.find((task) => task._id === taskId)
-
-    if (!taskToUpdate) return
-
-    // Determine if we're completing or uncompleting the task
-    const isCompleting = !taskToUpdate.completed
-
-    // Set or clear the completion date based on the new status
-    const completionDate = isCompleting ? new Date().toISOString() : null
-
     try {
-      await axios.patch(
-        `https://daily-journal-backend-3bb6.onrender.com/api/v1/tasks/${taskId}`,
-        {
-          completed: isCompleting,
-          completionDate: completionDate,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      )
+      const token = getCookie("token")
+      const response = await toggleTaskCompletion(token, taskId)
 
-      setTasks(
-        tasks.map((task) =>
-          task.id === taskId
-            ? {
-                ...task,
-                completed: isCompleting,
-                completionDate: completionDate,
-              }
-            : task,
-        ),
-      )
-      refreshTasks()
-      // Update selected task if it's the one being toggled
-      if (selectedTask && selectedTask._id === taskId) {
-        setSelectedTask({
-          ...selectedTask,
-          completed: isCompleting,
-          completionDate: completionDate,
-        })
-      }
-      
-    } catch (error) {
-      console.error("Error updating task:", error)
-      if (error.response?.status === 404) {
-        // API endpoint not found, update mock data
+      if (response && response.task) {
         setTasks(
           tasks.map((task) =>
             task._id === taskId
               ? {
                   ...task,
-                  completed: isCompleting,
-                  completionDate: completionDate,
+                  completed: response.task.completed,
+                  completionDate: response.task.completionDate,
                 }
               : task,
           ),
         )
 
-        // Update selected task if it's the one being toggled
         if (selectedTask && selectedTask._id === taskId) {
           setSelectedTask({
             ...selectedTask,
-            completed: isCompleting,
-            completionDate: completionDate,
+            completed: response.task.completed,
+            completionDate: response.task.completionDate,
           })
         }
-      } else {
-        toast.error("Failed to update task")
+
+        setTimeout(refreshTasks, 300)
       }
+    } catch (error) {
+      console.error("Error toggling task:", error)
+      toast.error("Failed to update task status")
     }
   }
-
+  
   const handleUpdateTask = async (taskId, data) => {
     const token = getCookie("token")
-    if(isLoading) return
     try {
       await updateTask(token, data)
       toast.success("Task updated successfully")
@@ -216,8 +168,8 @@ export default function TasksPage() {
       const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...data } : task))
 
       setTasks(updatedTasks)
+      fetchTasks()
       setSelectedTask({ ...selectedTask, ...data })
-      refreshTasks()
     } catch (error) {
       console.error("Error updating task:", error)
       if (error.response?.status === 404) {
@@ -235,7 +187,6 @@ export default function TasksPage() {
 
   const handleDeleteTask = async (taskId) => {
     const token = getCookie("token")
-    if(isLoading) return
     console.log(taskId)
     
     try {
@@ -247,10 +198,9 @@ export default function TasksPage() {
       // Close modal if the deleted task is the selected one
       if (selectedTask && selectedTask._id === taskId) {
         setIsModalOpen(false)
-        refreshTasks()
-        setSelectedTask(null)        
+        setSelectedTask(null)
       }
-      refreshTasks()
+      fetchTasks()
     } catch (error) {
       console.error("Error deleting task:", error)
       if (error.response?.status === 404) {

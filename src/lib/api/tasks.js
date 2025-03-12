@@ -20,7 +20,7 @@ const API_BASE_URL = "https://daily-journal-backend-fsza.onrender.com/api/v1"
  * // Get all tasks
  * const tasks = await getTasks("jwt_token_here");
  */
-export const getTasks = async (token, ) => {
+export const getTasks = async (token) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/tasks`, {
       headers: {
