@@ -92,22 +92,20 @@ export default function TasksPage() {
     if (isLoading) return
 
     try {
-      const user = await getUser(token)
-      const userId = user._id
       const data = {
         title: taskData.title,
         description: taskData.description,
         completed: false,
         dueDate: taskData.dueDate,
       }
-      const response = await createTask(token, data, userId)
+      const response = await createTask(token, data)
 
       if (response.data) {
         toast.success("Task added successfully")
         setTasks([response.data, ...tasks])
-        refreshTasks()
-        setShowTaskForm(false)
       }
+      setTimeout(refreshTasks, 300)
+      setShowTaskForm(false)
     } catch (error) {
       console.error("Error adding task:", error)
       if (error.response?.status === 404) {
@@ -119,6 +117,7 @@ export default function TasksPage() {
         }
         setTasks([newTask, ...tasks])
         toast.success("Task added successfully")
+        setTimeout(refreshTasks, 300)
         setShowTaskForm(false)
       } else {
         toast.error("Failed to add task")
@@ -170,7 +169,7 @@ export default function TasksPage() {
 
       setTasks(updatedTasks)
       setSelectedTask({ ...selectedTask, ...data })
-      fetchTasks()
+      setTimeout(refreshTasks, 300)
       setShowTaskForm(false)
     } catch (error) {
       console.error("Error updating task:", error)
@@ -181,7 +180,7 @@ export default function TasksPage() {
         setTasks(updatedTasks)
         setSelectedTask({ ...selectedTask, ...data })
         toast.success("Task updated successfully")
-        fetchTasks()
+        setTimeout(refreshTasks, 300)
         setShowTaskForm(false)
       } else {
         toast.error("Failed to update task")
@@ -204,7 +203,7 @@ export default function TasksPage() {
         setIsModalOpen(false)
         setSelectedTask(null)
       }
-      fetchTasks()
+      setTimeout(refreshTasks, 300)
     } catch (error) {
       console.error("Error deleting task:", error)
       if (error.response?.status === 404) {
@@ -216,7 +215,7 @@ export default function TasksPage() {
           setIsModalOpen(false)
           setSelectedTask(null)
         }
-        fetchTasks()
+        setTimeout(refreshTasks, 300)
         toast.success("Task deleted successfully")
       } else {
         toast.error("Failed to delete task")
