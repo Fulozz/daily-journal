@@ -22,7 +22,7 @@ export default function TasksPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [showTaskForm, setShowTaskForm] = useState(false)
-  const [activeTab, setActiveTab] = useState("all")
+  const [activeTab, setActiveTab] = useState("incomplete")
   const [selectedTask, setSelectedTask] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -241,10 +241,10 @@ export default function TasksPage() {
     const matchesSearch =
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (task.description && task.description.toLowerCase().includes(searchQuery.toLowerCase()))
-
-    if (activeTab === "all") return matchesSearch
-    if (activeTab === "completed") return matchesSearch && task.completed
+    
     if (activeTab === "incomplete") return matchesSearch && !task.completed
+    if (activeTab === "completed") return matchesSearch && task.completed
+    if (activeTab === "all") return matchesSearch
 
     return matchesSearch
   })
