@@ -36,8 +36,6 @@ export default function DashboardPage() {
         console.error("Error parsing user cookie:", e)
       }
     }
-
-    fetchEntries()
   }, [refreshTrigger])
 
   const fetchEntries = async () => {
