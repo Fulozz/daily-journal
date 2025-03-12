@@ -96,7 +96,7 @@ export default function TaskForm({ initialData, onSubmit, onCancel }) {
             <Button
               type="button"
               variant="outline"
-              className={cn("w-full justify-start text-left font-normal", !dueDate && "text-muted-foreground")}
+              className={cn("w-full justify-start text-left font-normal cursor-pointer", !dueDate && "text-muted-foreground")}
               disabled={isSubmitting}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
