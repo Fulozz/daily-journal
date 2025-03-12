@@ -44,9 +44,7 @@ export default function DashboardPage() {
     setIsLoading(true)
     const token = getCookie("token")
     try {
-      const user = await getUser(token)
-      const userId = user._id
-      const entriesData = await getEntries(token, userId)
+      const entriesData = await getEntries(token)
       setEntries(entriesData)
     } catch (error) {
       toast.error("Failed to fetch entries")
