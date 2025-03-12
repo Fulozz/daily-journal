@@ -18,7 +18,7 @@ export default function EntryForm({ initialData, onSubmit, onCancel }) {
   } = useForm({
     defaultValues: {
       title: initialData?.title || "",
-      description: initialData?.description || "",
+      content: initialData?.content || "",
     },
   })
   const onFormSubmit = async (data) => {

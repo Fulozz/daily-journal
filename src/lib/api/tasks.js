@@ -167,7 +167,7 @@ export const updateTask = async (token, taskData) => {
  * // Toggle task completion
  * const updatedTask = await toggleTaskCompletion("jwt_token_here", "task_id", true);
  */
-export const toggleTaskCompletion = async (token, taskId, completed) => {
+export const toggleTaskCompletion = async (token, taskId) => {
   try {
     const response = await axios.patch(
       `${API_BASE_URL}/tasks/toggle/${taskId}`,

@@ -23,6 +23,9 @@ export default function DashboardPage() {
   const [showEntryForm, setShowEntryForm] = useState(false)
   const [mounted, setMounted] = useState(false)
 
+    // Adicione um estado para controlar o recarregamento
+    const [refreshTrigger, setRefreshTrigger] = useState(0)
+
   useEffect(() => {
     setMounted(true)
     const userCookie = getCookie("user")
@@ -35,7 +38,7 @@ export default function DashboardPage() {
     }
 
     fetchEntries()
-  }, [])
+  }, [refreshTrigger])
 
   const fetchEntries = async () => {
     setIsLoading(true)
@@ -54,16 +57,14 @@ export default function DashboardPage() {
 
   const handleAddEntry = async (entryData) => {
     const token = getCookie("token")
-
+      // Evita múltiplos envios
+    if (isLoading) return
     try {
-      const user = await getUser(token)
-      const userId = user._id
-      entryData.userId = userId
       const newEntry = await createEntry(token, entryData)
       toast.success("Entry added successfully")
       setEntries([newEntry, ...entries])
       setShowEntryForm(false)
-      await fetchEntries()
+      refreshTasks() // Recarrega os dados após adicionar
     } catch (error) {
       toast.error("Failed to add entry")
     }
@@ -75,8 +76,8 @@ export default function DashboardPage() {
     try {
       await deleteEntry(token, entryId)
       toast.success("Entry deleted successfully")
-      await fetchEntries()
       setEntries(entries.filter((entry) => entry._id !== entryId))
+      refreshTasks() // Recarrega os dados após adicionar
     } catch (error) {
       toast.error("Failed to delete entry")
     }

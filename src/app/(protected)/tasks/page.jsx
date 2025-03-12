@@ -165,26 +165,27 @@ export default function TasksPage() {
     }
   };
 
-  const handleUpdateTask = async (taskId, data) => {
+  const handleUpdateTask = async (taskId, taskData) => {
     const token = getCookie("token")
     try {
-      await updateTask(token,  data)
+      taskData.taskId  = taskId
+      await updateTask(token,  taskData)
       toast.success("Task updated successfully")
 
-      const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...data } : task))
+      const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...taskData } : task))
 
       setTasks(updatedTasks)
       // Recarrega os dados após um pequeno delay
       setTimeout(refreshTasks, 300)
-      setSelectedTask({ ...selectedTask, ...data })
+      setSelectedTask({ ...selectedTask, ...taskData })
     } catch (error) {
       console.error("Error updating task:", error)
       if (error.response?.status === 404) {
         // API endpoint not found, update mock data
-        const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...data } : task))
+        const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...taskData } : task))
 
         setTasks(updatedTasks)
-        setSelectedTask({ ...selectedTask, ...data })
+        setSelectedTask({ ...selectedTask, ...taskData })
         toast.success("Task updated successfully")
       } else {
         toast.error("Failed to update task")
@@ -211,7 +212,7 @@ export default function TasksPage() {
       console.error("Error deleting task:", error)
       if (error.response?.status === 404) {
         // API endpoint not found, remove from mock data
-        setTasks(tasks.filter((task) => task.id !== taskId))
+        setTasks(tasks.filter((task) => task._id !== taskId))
 
         // Close modal if the deleted task is the selected one
         if (selectedTask && selectedTask.id === taskId) {

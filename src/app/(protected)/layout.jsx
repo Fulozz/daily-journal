@@ -30,7 +30,8 @@ export default async function ProtectedLayout({ children }) {
     // If token is invalid, redirect to login
     removeCookie("token")
     console.error("Token validation error:", error)
-    return redirect("/login")
+    redirect("/login")
+    return
   }
 
   return (
