@@ -28,6 +28,7 @@ export default function DashboardPage() {
 
   // Modifique o useEffect para depender do refreshTrigger
   useEffect(() => {
+    setMounted(true)
     const userCookie = getCookie("user")
     if (userCookie) {
       try {
@@ -36,7 +37,6 @@ export default function DashboardPage() {
         console.error("Error parsing user cookie:", e)
       }
     }
-
     fetchEntries()
   }, [refreshTrigger])
 
