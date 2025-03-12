@@ -32,6 +32,7 @@ export default function TasksPage() {
 
   useEffect(() => {
     setMounted(true)
+    fetchTasks()
   }, [refreshTrigger])
 
   const refreshTasks = () => {

@@ -26,8 +26,8 @@ export default function DashboardPage() {
     // Adicione um estado para controlar o recarregamento
     const [refreshTrigger, setRefreshTrigger] = useState(0)
 
+  // Modifique o useEffect para depender do refreshTrigger
   useEffect(() => {
-    setMounted(true)
     const userCookie = getCookie("user")
     if (userCookie) {
       try {
@@ -36,8 +36,15 @@ export default function DashboardPage() {
         console.error("Error parsing user cookie:", e)
       }
     }
+
+    fetchEntries()
   }, [refreshTrigger])
 
+  // Função para forçar o recarregamento dos dados
+  const refreshEntries = () => {
+    setRefreshTrigger((prev) => prev + 1)
+  }
+  
   const fetchEntries = async () => {
     setIsLoading(true)
     const token = getCookie("token")
