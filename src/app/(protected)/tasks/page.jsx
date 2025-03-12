@@ -169,8 +169,8 @@ export default function TasksPage() {
       const updatedTasks = tasks.map((task) => (task._id === taskId ? { ...task, ...data } : task))
 
       setTasks(updatedTasks)
-      fetchTasks()
       setSelectedTask({ ...selectedTask, ...data })
+      fetchTasks()
     } catch (error) {
       console.error("Error updating task:", error)
       if (error.response?.status === 404) {
@@ -206,10 +206,10 @@ export default function TasksPage() {
       console.error("Error deleting task:", error)
       if (error.response?.status === 404) {
         // API endpoint not found, remove from mock data
-        setTasks(tasks.filter((task) => task.id !== taskId))
+        setTasks(tasks.filter((task) => task._id !== taskId))
 
         // Close modal if the deleted task is the selected one
-        if (selectedTask && selectedTask.id === taskId) {
+        if (selectedTask && selectedTask._id === taskId) {
           setIsModalOpen(false)
           setSelectedTask(null)
         }

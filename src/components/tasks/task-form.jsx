@@ -17,6 +17,7 @@ import { ptBR } from "date-fns/locale"
 export default function TaskForm({ initialData, onSubmit, onCancel }) {
   const { t, language } = useLanguage()
   const [isSubmitting, setIsSubmitting] = useState(false)
+
   const {
     register,
     handleSubmit,
@@ -28,7 +29,6 @@ export default function TaskForm({ initialData, onSubmit, onCancel }) {
       title: initialData?.title || "",
       description: initialData?.description || "",
       dueDate: initialData?.dueDate ? new Date(initialData.dueDate) : undefined,
-      userId: initialData?.userId || "",
     },
   })
 
@@ -54,6 +54,7 @@ export default function TaskForm({ initialData, onSubmit, onCancel }) {
       }, 500)
     }
   }
+
   const formatDate = (date) => {
     if (!date) return ""
 
