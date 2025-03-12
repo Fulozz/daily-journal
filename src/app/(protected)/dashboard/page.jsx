@@ -37,6 +37,7 @@ export default function DashboardPage() {
         console.error("Error parsing user cookie:", e)
       }
     }
+
     fetchEntries()
   }, [refreshTrigger])
 
@@ -67,7 +68,6 @@ export default function DashboardPage() {
       toast.success("Entry added successfully")
       setEntries([newEntry, ...entries])
       setShowEntryForm(false)
-      refreshEntries() // Recarrega os dados após adicionar
     } catch (error) {
       toast.error("Failed to add entry")
     }

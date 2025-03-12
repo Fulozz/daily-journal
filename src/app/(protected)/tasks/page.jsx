@@ -171,6 +171,7 @@ export default function TasksPage() {
       setTasks(updatedTasks)
       setSelectedTask({ ...selectedTask, ...data })
       fetchTasks()
+      setShowTaskForm(false)
     } catch (error) {
       console.error("Error updating task:", error)
       if (error.response?.status === 404) {
@@ -180,6 +181,8 @@ export default function TasksPage() {
         setTasks(updatedTasks)
         setSelectedTask({ ...selectedTask, ...data })
         toast.success("Task updated successfully")
+        fetchTasks()
+        setShowTaskForm(false)
       } else {
         toast.error("Failed to update task")
       }
@@ -213,7 +216,7 @@ export default function TasksPage() {
           setIsModalOpen(false)
           setSelectedTask(null)
         }
-
+        fetchTasks()
         toast.success("Task deleted successfully")
       } else {
         toast.error("Failed to delete task")
