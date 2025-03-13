@@ -35,7 +35,6 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onClick, is
   return (
     <Card
       className={`cursor-pointer hover:bg-accent/50 transition-colors`}
-      onClick={() => onClick(task)}
     >
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
