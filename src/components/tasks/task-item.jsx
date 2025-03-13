@@ -34,7 +34,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onClick, is
 
   return (
     <Card
-      className={`cursor-pointer hover:bg-accent/50 transition-colors ${isDragging ? "opacity-50" : ""}`}
+      className={`cursor-pointer hover:bg-accent/50 transition-colors`}
       onClick={() => onClick(task)}
     >
       <CardContent className="p-4">
@@ -51,8 +51,9 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onClick, is
             </div>
             <div className="flex-1 min-w-0">
               <label
+                onClick={() => onClick(task)}
                 htmlFor={`task-${task._id || task.id}`}
-                className={`font-medium ${task.completed ? "line-through text-muted-foreground" : ""}`}
+                className={`font-medium ${task.completed ? " cursor-pointer line-through text-muted-foreground" : ""}`}
               >
                 {task.title}
               </label>
