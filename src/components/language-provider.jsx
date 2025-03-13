@@ -68,6 +68,7 @@ const translations = {
     selectDueDate: "Select due date",
     clearDate: "Clear date",
     completedOn: "Completed on",
+    noCompletedTasks: "No completed tasks",
 
     // Landing page translations
     personalJournal: "Your Personal Journal & Task Manager",
@@ -113,7 +114,7 @@ const translations = {
     readyToGetStarted: "Ready to Get Started?",
     joinThousands: "Join thousands of users who are already organizing their lives with Daily Journal.",
     createFreeAccount: "Create Free Account",
-    allRightsReserved: "© 2025 Thiago Silva Andrade. All rights reserved.",
+    allRightsReserved: "© 2025 Daily Journal. All rights reserved.",
     terms: "Terms",
     privacy: "Privacy",
     backToHome: "Back to Home",
@@ -181,6 +182,7 @@ const translations = {
     selectDueDate: "Selecione a data de vencimento",
     clearDate: "Limpar data",
     completedOn: "Foi concluído em",
+    noCompletedTasks: "Nenhuma tarefa concluída",
 
     // Landing page translations
     personalJournal: "Seu Diário Pessoal & Gerenciador de Tarefas",
@@ -227,12 +229,13 @@ const translations = {
     readyToGetStarted: "Pronto para Começar?",
     joinThousands: "Junte-se a milhares de usuários que já estão organizando suas vidas com o Daily Journal.",
     createFreeAccount: "Criar Conta Gratuita",
-    allRightsReserved: "© 2025 Thiago Silva Andrade. Todos os direitos reservados.",
+    allRightsReserved: "© 2025 Daily Journal. Todos os direitos reservados.",
     terms: "Termos",
     privacy: "Privacidade",
     backToHome: "Voltar para a Página Inicial",
   },
 }
+
 // Create context with default values to prevent undefined errors
 const LanguageContext = createContext({
   language: "en-US",
