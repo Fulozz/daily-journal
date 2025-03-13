@@ -1,9 +1,25 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { BookOpen, ArrowLeft } from "lucide-react"
+import { useLanguage } from "@/components/language-provider"
 
 export default function TermsPage() {
+  const { t } = useLanguage()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Avoid hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return null
+  }
+
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col dark">
       {/* Header */}
       <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center justify-between">
@@ -13,13 +29,13 @@ export default function TermsPage() {
           </Link>
           <Link href="/" className="flex items-center text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Back to Home
+            {t("backToHome")}
           </Link>
         </div>
       </header>
 
       {/* Content */}
-      <main className="flex-1 container py-12">
+      <main className="flex-1 container py-12 bg-background">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl font-bold mb-6">Terms of Service</h1>
 
@@ -102,17 +118,17 @@ export default function TermsPage() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full border-t py-6">
+      <footer className="w-full border-t py-6 bg-background">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
           <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-            © 2025 Daily Journal. All rights reserved.
+            {t("allRightsReserved")}
           </p>
           <div className="flex items-center gap-4">
             <Link href="/terms" className="text-sm font-medium underline-offset-4 hover:underline">
-              Terms
+              {t("terms")}
             </Link>
             <Link href="/privacy" className="text-sm font-medium underline-offset-4 hover:underline">
-              Privacy
+              {t("privacy")}
             </Link>
           </div>
         </div>

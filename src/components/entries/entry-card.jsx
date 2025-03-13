@@ -1,75 +1,82 @@
 "use client"
 
 import { useState } from "react"
-import { formatDistanceToNow } from "date-fns"
-import { Edit, MoreVertical, Trash } from "lucide-react"
+import { format } from "date-fns"
+import { ptBR } from "date-fns/locale"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Trash, Edit, MoreHorizontal } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useLanguage } from "@/components/language-provider"
-import EntryForm from "@/components/entries/entry-form"
 
-export default function EntryCard({ entry, onDelete, onUpdate }) {
-  const { t } = useLanguage()
-  const [isEditing, setIsEditing] = useState(false)
+export default function EntryCard({ entry, onDelete, onEdit }) {
+  const { language } = useLanguage()
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const formatDate = (dateString) => {
     try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true })
+      return format(new Date(dateString), "PPP", {
+        locale: language === "pt-BR" ? ptBR : undefined,
+      })
     } catch (e) {
-      return "some time ago"
+      return dateString
     }
   }
 
-  if (isEditing) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("edit")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <EntryForm
-            initialData={entry}
-            onSubmit={(data) => {
-              onUpdate?.(entry._id, data)
-              setIsEditing(false)
-            }}
-            onCancel={() => setIsEditing(false)}
-          />
-        </CardContent>
-      </Card>
-    )
+  const handleDelete = async () => {
+    setIsDeleting(true)
+    try {
+      await onDelete(entry._id || entry.id)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  // Problema: A função handleEdit não está chamando a função onEdit corretamente
+  const handleEdit = () => {
+    // Não está passando o entry para a função onEdit
+    onEdit(entry)
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
+    <Card className="h-full flex flex-col">
+      <CardHeader>
         <div className="flex justify-between items-start">
-          <CardTitle className="text-lg">{entry.title}</CardTitle>
+          <CardTitle className="text-xl">{entry.title}</CardTitle>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreVertical className="h-4 w-4" />
+                <MoreHorizontal className="h-4 w-4" />
                 <span className="sr-only">Open menu</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsEditing(true)}>
+              <DropdownMenuItem onClick={handleEdit}>
                 <Edit className="mr-2 h-4 w-4" />
-                <span>{t("edit")}</span>
+                <span>Edit</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(entry._id)} className="text-destructive focus:text-destructive">
+              <DropdownMenuItem onClick={handleDelete} disabled={isDeleting} className="text-destructive">
                 <Trash className="mr-2 h-4 w-4" />
-                <span>{t("delete")}</span>
+                <span>{isDeleting ? "Deleting..." : "Delete"}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
         <CardDescription>{formatDate(entry.createdAt)}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <p className="whitespace-pre-line">{entry.content}</p>
+      <CardContent className="flex-1">
+        <div className="whitespace-pre-wrap">{entry.content}</div>
       </CardContent>
+      <CardFooter className="border-t pt-4 flex justify-between">
+        <Button variant="outline" size="sm" onClick={handleEdit}>
+          <Edit className="mr-2 h-4 w-4" />
+          Edit
+        </Button>
+        <Button variant="outline" size="sm" onClick={handleDelete} disabled={isDeleting} className="text-destructive">
+          <Trash className="mr-2 h-4 w-4" />
+          {isDeleting ? "Deleting..." : "Delete"}
+        </Button>
+      </CardFooter>
     </Card>
   )
 }
