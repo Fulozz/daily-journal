@@ -17,6 +17,7 @@ import { ptBR } from "date-fns/locale"
 export default function TaskForm({ initialData, onSubmit, onCancel }) {
   const { t, language } = useLanguage()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [open, setOpen] = useState(false)
 
   const {
     register,
@@ -91,13 +92,15 @@ export default function TaskForm({ initialData, onSubmit, onCancel }) {
 
       <div className="space-y-2">
         <Label htmlFor="dueDate">{t("dueDate")}</Label>
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
+              id="date-picker-button"
               type="button"
               variant="outline"
-              className={cn("w-full justify-start text-left font-normal cursor-pointer", !dueDate && "text-muted-foreground")}
+              className={cn("w-full justify-start text-left font-normal", !dueDate && "text-muted-foreground")}
               disabled={isSubmitting}
+              onClick={() => setOpen(true)}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {dueDate ? formatDate(dueDate) : t("selectDueDate")}
@@ -107,7 +110,10 @@ export default function TaskForm({ initialData, onSubmit, onCancel }) {
             <Calendar
               mode="single"
               selected={dueDate}
-              onSelect={(date) => setValue("dueDate", date)}
+              onSelect={(date) => {
+                setValue("dueDate", date)
+                setOpen(false)
+              }}
               initialFocus
               locale={language === "pt-BR" ? ptBR : undefined}
               disabled={isSubmitting}
