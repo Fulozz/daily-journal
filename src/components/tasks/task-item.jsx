@@ -41,7 +41,6 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onClick, is
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3 flex-1" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center">
-              <GripVertical className="h-4 w-4 mr-2 text-muted-foreground cursor-grab" />
               <Checkbox
                 id={`task-${task._id || task.id}`}
                 checked={task.completed}
@@ -49,9 +48,8 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onClick, is
                 className="mt-0.5"
               />
             </div>
-            <div className="flex-1 min-w-0">
+            <div onClick={() => onClick(task)} className="flex-1 min-w-0" >
               <label
-                onClick={() => onClick(task)}
                 htmlFor={`task-${task._id || task.id}`}
                 className={`font-medium ${task.completed ? " cursor-pointer line-through text-muted-foreground" : ""}`}
               >
