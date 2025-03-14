@@ -1,156 +1,139 @@
 "use client"
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { useLanguage } from "@/components/language-provider"
-import { CalendarIcon } from "lucide-react"
+import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
+import { CalendarIcon, X } from "lucide-react"
 import { format } from "date-fns"
+import { cn } from "@/lib/utils"
+import { useLanguage } from "@/components/language-provider"
+import UserSelector from "@/components/tasks/user-selector"
+import CategorySelector from "@/components/tasks/category-selector"
 import { ptBR } from "date-fns/locale"
 
-export default function TaskForm({ initialData, onSubmit, onCancel }) {
+export default function TaskForm({ onSubmit, onCancel, initialData = null }) {
   const { t, language } = useLanguage()
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [dueDate, setDueDate] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [assignee, setAssignee] = useState(null)
+  const [category, setCategory] = useState("")
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-  } = useForm({
-    defaultValues: {
-      title: initialData?.title || "",
-      description: initialData?.description || "",
-      dueDate: initialData?.dueDate ? new Date(initialData.dueDate) : undefined,
-    },
-  })
+  useEffect(() => {
+    if (initialData) {
+      setTitle(initialData.title || "")
+      setDescription(initialData.description || "")
+      setDueDate(initialData.dueDate ? new Date(initialData.dueDate) : null)
+      setAssignee(initialData.assignedToDetails || null)
+      setCategory(initialData.category || "")
+    }
+  }, [initialData])
 
-  const dueDate = watch("dueDate")
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!title.trim()) return
 
-  const onFormSubmit = async (data) => {
-    // Previne múltiplos envios
-    if (isSubmitting) return
-
-    // Define o estado de submissão
     setIsSubmitting(true)
-
     try {
-      // Convert date to ISO string if it exists
-      if (data.dueDate) {
-        data.dueDate = data.dueDate.toISOString()
+      const taskData = {
+        title,
+        description,
+        dueDate: dueDate ? dueDate.toISOString() : undefined,
+        assignedTo: assignee?._id,
+        assignedToDetails: assignee
+          ? {
+              name: assignee.name,
+              email: assignee.email,
+              avatar: assignee.avatar,
+            }
+          : undefined,
+        category: category || undefined,
       }
-      await onSubmit(data)
+      await onSubmit(taskData)
     } finally {
-      // Restaura o estado de submissão após um tempo para garantir que a UI seja atualizada
-      setTimeout(() => {
-        setIsSubmitting(false)
-      }, 500)
+      setIsSubmitting(false)
     }
   }
 
-  const formatDate = (date) => {
-    if (!date) return ""
-
-    return format(date, "PPP", {
-      locale: language === "pt-BR" ? ptBR : undefined,
-    })
+  const clearDueDate = () => {
+    setDueDate(null)
   }
 
   return (
-    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="title">{t("title")}</Label>
+        <Label htmlFor="title">{t("task")}</Label>
         <Input
           id="title"
-          {...register("title", {
-            required: "Task title is required",
-          })}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           placeholder={t("enterTask")}
-          disabled={isSubmitting}
+          required
         />
-        {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="category">Categoria</Label>
+        <CategorySelector value={category} onValueChange={setCategory} />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="description">{t("description")}</Label>
         <Textarea
           id="description"
-          {...register("description")}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           placeholder={t("enterDescription")}
           className="min-h-[100px]"
-          disabled={isSubmitting}
         />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="dueDate">{t("dueDate")}</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              type="button"
-              variant="outline"
-              className={cn("w-full justify-start text-left font-normal cursor-pointer", !dueDate && "text-muted-foreground")}
-              disabled={isSubmitting}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {dueDate ? formatDate(dueDate) : t("selectDueDate")}
+        <div className="flex items-center gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn("w-full justify-start text-left font-normal", !dueDate && "text-muted-foreground")}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dueDate ? (
+                  format(dueDate, "PPP", { locale: language === "pt-BR" ? ptBR : undefined })
+                ) : (
+                  <span>{t("selectDueDate")}</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar mode="single" selected={dueDate} onSelect={setDueDate} initialFocus />
+            </PopoverContent>
+          </Popover>
+          {dueDate && (
+            <Button type="button" variant="ghost" size="icon" onClick={clearDueDate} className="h-10 w-10">
+              <X className="h-4 w-4" />
+              <span className="sr-only">{t("clearDate")}</span>
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={dueDate}
-              onSelect={(date) => setValue("dueDate", date)}
-              initialFocus
-              locale={language === "pt-BR" ? ptBR : undefined}
-              disabled={isSubmitting}
-            />
-          </PopoverContent>
-        </Popover>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="mt-1"
-          onClick={() => setValue("dueDate", undefined)}
-          disabled={isSubmitting}
-        >
-          {t("clearDate")}
-        </Button>
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="assignee">Atribuir para</Label>
+        <UserSelector selectedUser={assignee} onUserSelect={setAssignee} onClear={() => setAssignee(null)} />
       </div>
 
       <div className="flex justify-end space-x-2">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+        <Button type="button" variant="outline" onClick={onCancel}>
           {t("cancel")}
         </Button>
-        <Button type="submit" disabled={isSubmitting} className={isSubmitting ? "opacity-70 cursor-not-allowed" : ""}>
-          {isSubmitting ? (
-            <span className="flex items-center">
-              <svg
-                className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              {t("saving")}
-            </span>
-          ) : (
-            t("save")
-          )}
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? t("saving") : initialData ? t("save") : t("addTask")}
         </Button>
       </div>
     </form>

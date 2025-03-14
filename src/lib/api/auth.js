@@ -6,7 +6,7 @@ import axios from "axios"
 import { getCookie } from "cookies-next"
 import { deleteCookie } from "cookies-next"
 
-const API_BASE_URL = "https://daily-journal-backend-fsza.onrender.com/api/v1"
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`
 
 /**
  * Register a new user

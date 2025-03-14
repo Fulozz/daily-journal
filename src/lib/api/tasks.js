@@ -5,7 +5,7 @@
 import axios from "axios"
 
 
-const API_BASE_URL = "https://daily-journal-backend-fsza.onrender.com/api/v1"
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`
 
 
 /**
