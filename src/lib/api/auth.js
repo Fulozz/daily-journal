@@ -1,146 +1,85 @@
 /**
- * Authentication API Service (Client-side)
- * This module handles all client-side authentication-related API requests
+ * API de Autenticação
+ * Funções para login, registro, validação de token e gerenciamento de sessão
  */
+
 import axios from "axios"
-import { getCookie } from "cookies-next"
-import { deleteCookie } from "cookies-next"
-
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`
+import { API_BASE_URL, createHeaders, handleApiError } from "./config"
 
 /**
- * Register a new user
- *
- * @param {Object} userData - User registration data
- * @param {string} userData.name - User's full name
- * @param {string} userData.email - User's email address
- * @param {string} userData.password - User's password
- *
- * @returns {Promise<Object>} - Response with registration confirmation
- * @throws {Error} - If registration fails
- *
+ * Realiza login do usuário
+ * @param {Object} credentials - Credenciais do usuário
+ * @param {string} credentials.email - Email do usuário
+ * @param {string} credentials.password - Senha do usuário
+ * @returns {Promise<Object>} Dados do usuário e token
  * @example
- * // Register a new user
- * const userData = {
- *   name: "John Doe",
- *   email: "john@example.com",
- *   password: "securepassword"
- * };
- * const response = await registerUser(userData);
+ * const { token, user } = await login({ email: "user@example.com", password: "password123" })
  */
-export const registerUser = async (userData) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}/register`, userData)
-    return response.data
-  } catch (error) {
-    console.error("Registration error:", error)
-    throw error
-  }
-}
-
-/**
- * Login a user
- *
- * @param {Object} credentials - User login credentials
- * @param {string} credentials.email - User's email address
- * @param {string} credentials.password - User's password
- *
- * @returns {Promise<Object>} - Response with token and user data
- * @throws {Error} - If login fails
- *
- * @example
- * // Login a user
- * const credentials = {
- *   email: "john@example.com",
- *   password: "securepassword"
- * };
- * const { token, user } = await loginUser(credentials);
- */
-export const loginUser = async (credentials) => {
+export async function login(credentials) {
   try {
     const response = await axios.post(`${API_BASE_URL}/login`, credentials)
     return response.data
   } catch (error) {
-    console.error("Login error:", error)
-    throw error
+    handleApiError(error, "login")
   }
 }
 
 /**
- * Validate a user's authentication token
- *
- * @param {string} token - JWT authentication token
- *
- * @returns {Promise<boolean>} - True if token is valid
- * @throws {Error} - If validation fails
- *
+ * Registra um novo usuário
+ * @param {Object} userData - Dados do novo usuário
+ * @param {string} userData.name - Nome do usuário
+ * @param {string} userData.email - Email do usuário
+ * @param {string} userData.password - Senha do usuário
+ * @returns {Promise<Object>} Dados do usuário registrado
  * @example
- * // Validate a token
- * const isValid = await validateToken("jwt_token_here");
+ * const user = await register({ name: "John Doe", email: "john@example.com", password: "password123" })
  */
-export const validateToken = async (token) => {
-  if (!token) return false
-
+export async function register(userData) {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}/validate-token`,
-      {}, // Empty body
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    )
+    const response = await axios.post(`${API_BASE_URL}/register`, userData)
+    return response.data
+  } catch (error) {
+    handleApiError(error, "register")
+  }
+}
+
+/**
+ * Valida um token JWT
+ * @param {string} token - Token JWT a ser validado
+ * @returns {Promise<boolean>} True se o token for válido
+ * @example
+ * const isValid = await validateToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+ */
+export async function validateToken(token) {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/validate-token`, {
+      headers: createHeaders(token),
+    })
     return response.status === 200
   } catch (error) {
-    console.error("Token validation error:", error)
+    handleApiError(error, "validateToken")
     return false
   }
 }
-/**
- * Get auth token from cookies (client-side)
- *
- * @returns {string|null} - The authentication token or null if not found
- *
- * @example
- * // Get auth token client-side
- * const token = getAuthToken();
- */
-export function getAuthToken() {
-  return getCookie("token")
-}
 
 /**
- * Remove a cookie by name (client-side)
- *
- * @param {string} cookieName - The name of the cookie to remove
- *
+ * Atualiza a senha do usuário
+ * @param {string} token - Token JWT do usuário
+ * @param {Object} passwordData - Dados da senha
+ * @param {string} passwordData.currentPassword - Senha atual
+ * @param {string} passwordData.newPassword - Nova senha
+ * @returns {Promise<Object>} Resultado da operação
  * @example
- * // Remove a cookie
- * removeCookie("token");
+ * const result = await updatePassword(token, { currentPassword: "old123", newPassword: "new456" })
  */
-export function removeCookie(cookieName) {
-  deleteCookie(cookieName)
-}
-
-/**
- * Get user data from cookies (client-side)
- *
- * @returns {Object|null} - The user data or null if not found
- *
- * @example
- * // Get user data client-side
- * const user = getUserFromCookie();
- */
-export function getUserFromCookie() {
-  const userCookie = getCookie("user")
-  if (!userCookie) return null
-
+export async function updatePassword(token, passwordData) {
   try {
-    return JSON.parse(userCookie)
-  } catch (e) {
-    console.error("Error parsing user cookie:", e)
-    return null
+    const response = await axios.put(`${API_BASE_URL}/user/password`, passwordData, {
+      headers: createHeaders(token, true),
+    })
+    return response.data
+  } catch (error) {
+    handleApiError(error, "updatePassword")
   }
 }
 

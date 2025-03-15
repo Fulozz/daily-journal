@@ -1,40 +1,48 @@
 /**
- * API Service
- * This module exports all API functions from the different service modules
+ * API Central
+ * Exporta todas as funções da API para uso em toda a aplicação
  */
 
-// Authentication API
+// Autenticação
 export {
-    registerUser,
-    loginUser,
-    validateToken,
-    getAuthToken,
-    getUserFromCookie,
-    removeCookie,
-  } from "./auth"
-  
-  // User API
-  export {
-    updateUser,
-    updatePassword,
-    getUser,
-  } from "./user"
-  
-  // Entries API
-  export {
-    getEntries,
-    createEntry,
-    updateEntry,
-    deleteEntry,
-  } from "./entries"
-  
-  // Tasks API
-  export {
-    getTasks,
-    createTask,
-    updateTask,
-    toggleTaskCompletion,
-    deleteTask,
-  } from "./tasks"
-  
-  
+  login,
+  register,
+  validateToken,
+  updatePassword,
+} from "./auth"
+
+// Usuários
+export {
+  getUser,
+  updateUser,
+  searchUsers,
+} from "./user"
+
+// Tarefas
+export {
+  getTasks,
+  getAssignedTasks,
+  createTask,
+  updateTask,
+  toggleTaskCompletion,
+  assignTask,
+  updateTaskStatus,
+  deleteTask,
+} from "./task"
+
+// Entradas de Diário
+export {
+  getEntries,
+  getEntry,
+  createEntry,
+  updateEntry,
+  deleteEntry,
+} from "./entry"
+
+// Notificações
+export {
+  getNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+} from "./notification"
+
